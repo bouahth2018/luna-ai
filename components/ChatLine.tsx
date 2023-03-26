@@ -13,22 +13,14 @@ export interface ChatGPTMessage {
 
 // loading placeholder animation for the chat line
 export const LoadingChatLine = () => (
-  <div className="flex animate-pulse max-w-3xl mx-auto px-4 py-5 sm:px-6">
-    <div className="flex flex-grow space-x-3">
-      <div className="min-w-0 flex-1">
-        <p className="font-large text-xxl text-neutral-500">
-          <a href="#" className="hover:underline">
-            Luna
-          </a>
-        </p>
-        <div className="space-y-4 pt-4">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="col-span-2 h-2 rounded bg-zinc-500"></div>
-            <div className="col-span-1 h-2 rounded bg-zinc-500"></div>
-          </div>
-          <div className="h-2 rounded bg-zinc-500"></div>
-        </div>
+  <div className="flex max-w-3xl mx-auto px-4 py-8 sm:px-8">
+    <div className="flex space-x-3">
+      <div className="flex w-10 justify-end pr-2">
+        <p className="font-large text-xxl text-neutral-500">Luna</p>
       </div>
+    </div>
+    <div className="flex w-full justify-start pl-2">
+      <p className="animate-pulse font-black text-white">...</p>
     </div>
   </div>
 );
