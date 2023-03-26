@@ -166,11 +166,7 @@ export default function Home() {
             <div className="hidden sm:mt-8 sm:flex sm:justify-center">
               <div className="relative rounded-full py-1 px-3 text-sm leading-6 text-[#eaeaea] ring-1 ring-white/20 hover:ring-white/50">
                 We rely on your support to keep this service running.{" "}
-                <a
-                  href="#"
-                  className="font-bold text-white"
-                  onClick={handleOpenModal}
-                >
+                <a className="font-bold text-white" onClick={handleOpenModal}>
                   <span className="absolute inset-0" aria-hidden="true" />
                   Donate <span aria-hidden="true">&rarr;</span>
                 </a>
