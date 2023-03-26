@@ -1,4 +1,4 @@
-import { Layout, Text, Page } from "@vercel/examples-ui";
+import { Layout } from "@vercel/examples-ui";
 import { Chat } from "../components/Chat";
 import Head from "next/head";
 
