@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../components/Button";
 import {
   type ChatGPTMessage,
@@ -8,7 +8,6 @@ import {
 import { useCookies } from "react-cookie";
 import Head from "next/head";
 import Modal from "../components/Modal";
-import { throttle } from "@/utils";
 
 const COOKIE_NAME = "nextjs-example-ai-chat-gpt3";
 
@@ -20,7 +19,13 @@ export const initialMessages: ChatGPTMessage[] = [
   },
 ];
 
-const InputMessage = ({ input, setInput, setLanding, sendMessage }: any) => (
+const InputMessage = ({
+  input,
+  setInput,
+  setLanding,
+  sendMessage,
+  isGenerating,
+}: any) => (
   <div>
     <div className="mx-auto justify-center flex max-w-3xl mb-1">
       <input
@@ -36,6 +41,7 @@ const InputMessage = ({ input, setInput, setLanding, sendMessage }: any) => (
             setLanding(false);
           }
         }}
+        disabled={isGenerating}
         onChange={(e) => {
           setInput(e.target.value);
         }}
@@ -48,6 +54,7 @@ const InputMessage = ({ input, setInput, setLanding, sendMessage }: any) => (
           setInput("");
           setLanding(false);
         }}
+        disabled={isGenerating}
       >
         Say
       </Button>
@@ -68,6 +75,32 @@ export default function Home() {
   const [landing, setLanding] = useState<Boolean>(true);
   const [open, setOpen] = useState<Boolean>(false);
 
+  const [autoscroll, setAutoscroll] = useState<Boolean>(true);
+  const [isGenerating, setIsGenerating] = useState<Boolean>(false);
+  const chatRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    if (!chatRef.current) return;
+
+    const { scrollTop, clientHeight, scrollHeight } = chatRef.current;
+    const threshold = 50;
+
+    if (scrollTop + clientHeight >= scrollHeight) {
+      setAutoscroll(true);
+    } else if (scrollHeight - scrollTop <= clientHeight + threshold) {
+      setAutoscroll(true);
+    } else {
+      setAutoscroll(false);
+    }
+  };
+
+  useEffect(() => {
+    if (chatRef.current && autoscroll) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, [messages, autoscroll]);
+
   function handleOpenModal() {
     setOpen(true);
   }
@@ -80,89 +113,10 @@ export default function Home() {
     }
   }, [cookie, setCookie]);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
-
-  const scrollToBottom = useCallback(() => {
-    if (autoScrollEnabled) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-      textareaRef.current?.focus();
-    }
-  }, [autoScrollEnabled]);
-
-  const handleScroll = () => {
-    if (chatContainerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } =
-        chatContainerRef.current;
-      const bottomTolerance = 30;
-
-      if (scrollTop + clientHeight < scrollHeight - bottomTolerance) {
-        setAutoScrollEnabled(false);
-        // setShowScrollDownButton(true)
-      } else {
-        setAutoScrollEnabled(true);
-        // setShowScrollDownButton(false)
-      }
-    }
-  };
-
-  // const handleScrollDown = () => {
-  //   chatContainerRef.current?.scrollTo({
-  //     top: chatContainerRef.current.scrollHeight,
-  //     behavior: 'smooth',
-  //   });
-  // };
-
-  // const handleSettings = () => {
-  //   setShowSettings(!showSettings);
-  // };
-
-  // const scrollDown = () => {
-  //   if (autoScrollEnabled) {
-  //     messagesEndRef.current?.scrollIntoView(true);
-  //   }
-  // };
-  // const throttleScrollDown = throttle(scrollDown, 250);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setAutoScrollEnabled(entry.isIntersecting);
-        if (entry.isIntersecting) {
-          textareaRef.current?.focus();
-        }
-      },
-      {
-        root: null,
-        threshold: 0.5,
-      }
-    );
-    const messagesEndElement = messagesEndRef.current;
-    if (messagesEndElement) {
-      observer.observe(messagesEndElement);
-    }
-    return () => {
-      if (messagesEndElement) {
-        observer.unobserve(messagesEndElement);
-      }
-    };
-  }, [messagesEndRef]);
-
-  useEffect(() => {
-    const contentElement = chatContainerRef.current;
-    if (contentElement) {
-      contentElement.scrollTo({
-        top: contentElement.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [messages]);
-
   // send message to API /api/chat endpoint
   const sendMessage = async (message: string) => {
     setLoading(true);
+    setIsGenerating(true);
     const newMessages = [
       ...messages,
       { role: "user", content: message } as ChatGPTMessage,
@@ -181,7 +135,9 @@ export default function Home() {
       }),
     });
 
-    console.log("Edge function returned.");
+    console.log(last10messages);
+
+    // console.log("Edge function returned.");
 
     if (!response.ok) {
       throw new Error(response.statusText);
@@ -200,6 +156,7 @@ export default function Home() {
     let lastMessage = "";
 
     while (!done) {
+      setIsGenerating(true);
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
       const chunkValue = decoder.decode(value);
@@ -212,6 +169,7 @@ export default function Home() {
       ]);
 
       setLoading(false);
+      setIsGenerating(false);
     }
   };
 
@@ -225,7 +183,7 @@ export default function Home() {
       </Head>
       <main>
         {landing == true ? (
-          <div className="h-screen">
+          <div className=" h-screen">
             <div className="mx-auto max-w-2xl py-36 sm:py-48 lg:py-48">
               <div className="text-center">
                 <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
@@ -251,7 +209,7 @@ export default function Home() {
             </div>
             <Modal open={open} setOpen={setOpen} />
 
-            <div className="absolute bottom-0 left-0 w-full bg-[#111] pt-7">
+            <div className="fixed bottom-0 left-0 w-full bg-[#111] pt-7">
               <InputMessage
                 input={input}
                 setInput={setInput}
@@ -262,7 +220,7 @@ export default function Home() {
           </div>
         ) : (
           <div
-            ref={chatContainerRef}
+            ref={chatRef}
             onScroll={handleScroll}
             className="h-screen overflow-x-hidden pb-28"
           >
@@ -271,15 +229,16 @@ export default function Home() {
             ))}
             <div className="bg-[#222]">{loading && <LoadingChatLine />}</div>
 
-            <div ref={messagesEndRef} />
-
-            <div className="absolute bottom-0 left-0 w-full bg-[#111] pt-7">
+            <div
+              ref={inputRef}
+              className="fixed bottom-0 left-0 w-full bg-[#111] pt-7"
+            >
               <InputMessage
                 input={input}
                 setInput={setInput}
                 setLanding={setLanding}
                 sendMessage={sendMessage}
-                textareaRef={textareaRef}
+                isGenerating={isGenerating}
               />
             </div>
           </div>
