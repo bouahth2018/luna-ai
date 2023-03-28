@@ -33,7 +33,6 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
     return null;
   }
   const formattedMessage = convertNewLines(content);
-  console.log(content);
 
   return (
     <div
@@ -43,7 +42,7 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
           : "bg-[#222] text-white clear-both"
       }
     >
-      <div className="mx-auto lg:max-w-2xl xl:max-w-3xl px-4 py-8 ring-zinc-100 sm:px-8">
+      <div className="mx-auto md:max-w-2xl lg:max-w-3xl px-4 py-8 ring-zinc-100 sm:px-8">
         <div className="flex space-x-3">
           <div className="flex flex-row">
             <div className="flex w-10 justify-end pr-2">
