@@ -135,8 +135,6 @@ export default function Home() {
       }),
     });
 
-    console.log(last10messages);
-
     // console.log("Edge function returned.");
 
     if (!response.ok) {
