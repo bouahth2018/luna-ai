@@ -1,8 +1,9 @@
 import clsx from "clsx";
-import Balancer from "react-wrap-balancer";
-
-// wrap Balancer to remove type errors :( - @TODO - fix this ugly hack
-const BalancerWrapper = (props: any) => <Balancer {...props} />;
+import { MemoizedReactMarkdown } from "./Markdown/MemoizedReactMarkdown";
+import { CodeBlock } from "./Markdown/CodeBlock";
+import rehypeMathjax from "rehype-mathjax";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 
 type ChatGPTAgent = "user" | "system" | "assistant";
 
@@ -26,19 +27,22 @@ export const LoadingChatLine = () => (
 );
 
 // util helper to convert new lines to <br /> tags
-const convertNewLines = (text: string) =>
-  text.split("\n").map((line, i) => (
-    <span key={i}>
-      {line}
-      <br />
-    </span>
-  ));
+// const convertNewLines = (text: string) =>
+//   text.split("\n").map((line, i) => (
+//     <span key={i}>
+//       {line}
+//       <br />
+//     </span>
+//   ));
+
+const convertNewLines = (text: string) => text.split("\n").join("  \n");
 
 export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
   if (!content) {
     return null;
   }
-  const formatteMessage = convertNewLines(content);
+  const formattedMessage = convertNewLines(content);
+  console.log(content);
 
   return (
     <div
@@ -48,46 +52,73 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
           : "bg-[#222] text-white clear-both"
       }
     >
-      {/* <BalancerWrapper> */}
-      <div className="mx-auto max-w-3xl px-4 py-8 ring-zinc-100 sm:px-8">
+      <div className="mx-auto lg:max-w-2xl xl:max-w-3xl px-4 py-8 ring-zinc-100 sm:px-8">
         <div className="flex space-x-3">
           <div className="flex flex-row">
             <div className="flex w-10 justify-end pr-2">
               <p className="font-large text-xxl text-neutral-500">
-                <a href="#" className="hover:underline">
-                  {role == "assistant" ? "Luna" : "You"}
-                </a>
+                {role == "assistant" ? "Luna" : "You"}
               </p>
             </div>
             <div className="flex justify-start pl-2">
-              <p
+              <div
                 className={clsx(
                   "text ",
                   role == "assistant" ? "font-normal font- " : "text-white"
                 )}
               >
-                {formatteMessage}
-              </p>
+                {/* {formattedMessage} */}
+                <MemoizedReactMarkdown
+                  className="prose prose-invert text-base w-screen"
+                  remarkPlugins={[remarkGfm, remarkMath]}
+                  rehypePlugins={[rehypeMathjax]}
+                  components={{
+                    code({ node, inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || "");
+                      return !inline && match ? (
+                        <CodeBlock
+                          key={Math.random()}
+                          language={match[1]}
+                          value={String(children).replace(/\n$/, "")}
+                          {...props}
+                        />
+                      ) : (
+                        <code className={className} {...props}>
+                          {children}
+                        </code>
+                      );
+                    },
+                    table({ children }) {
+                      return (
+                        <table className="border-collapse border border-[#555] py-1 px-3">
+                          {children}
+                        </table>
+                      );
+                    },
+                    th({ children }) {
+                      return (
+                        <th className="break-words border border-[#555] bg-black/50 py-1 px-3 text-white">
+                          {children}
+                        </th>
+                      );
+                    },
+                    td({ children }) {
+                      return (
+                        <td className="break-words border border-[#555] py-1 px-3">
+                          {children}
+                        </td>
+                      );
+                    },
+                  }}
+                >
+                  {formattedMessage}
+                  {/* {orderedList} */}
+                </MemoizedReactMarkdown>
+              </div>
             </div>
           </div>
-          {/* <div className="flex-1 gap-4">
-            <p className="font-large text-xxl text-gray-400">
-              <a href="#" className="hover:underline">
-                {role == "assistant" ? "Luna" : "You"}
-              </a>
-            </p>
-            <p
-              className={clsx(
-                "text ",
-                role == "assistant" ? "font-normal font- " : "text-gray-900"
-              )}
-            >
-              {formatteMessage}
-            </p>
-          </div> */}
         </div>
       </div>
-      {/* </BalancerWrapper> */}
     </div>
   );
 }
