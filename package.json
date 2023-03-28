@@ -1,7 +1,6 @@
 {
-  "name": "ai-chatgpt",
-  "repository": "https://github.com/vercel/examples.git",
-  "license": "MIT",
+  "name": "luna-ai",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,35 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.13",
-    "@vercel/analytics": "^0.1.11",
-    "@vercel/examples-ui": "^1.0.5",
-    "clsx": "^1.2.1",
-    "eventsource-parser": "^0.1.0",
-    "next": "latest",
-    "next-i18next": "^13.2.2",
-    "react": "latest",
-    "react-cookie": "^4.1.1",
-    "react-dom": "latest",
-    "react-markdown": "^8.0.6",
-    "react-syntax-highlighter": "^15.5.0",
-    "react-wrap-balancer": "^0.1.5",
-    "rehype-mathjax": "^4.0.2",
-    "remark-gfm": "^3.0.1",
-    "remark-math": "^5.1.1",
-    "tabler-icons-react": "^1.56.0"
+    "@types/node": "18.15.10",
+    "@types/react": "18.0.30",
+    "@types/react-dom": "18.0.11",
+    "eslint": "8.36.0",
+    "eslint-config-next": "13.2.4",
+    "next": "13.2.4",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "5.0.2"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
-    "@types/node": "^17.0.45",
-    "@types/react": "latest",
-    "@types/react-syntax-highlighter": "^15.5.6",
     "autoprefixer": "^10.4.14",
-    "eslint": "^8.36.0",
-    "eslint-config-next": "^12.3.4",
     "postcss": "^8.4.21",
-    "tailwindcss": "^3.2.7",
-    "turbo": "^1.8.3",
-    "typescript": "^4.9.5"
+    "tailwindcss": "^3.2.7"
   }
 }
