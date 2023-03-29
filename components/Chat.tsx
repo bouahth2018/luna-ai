@@ -126,7 +126,7 @@ export function Chat() {
     <div>
       {landing == true ? (
         <>
-          <div className="h-screen overflow-y-scroll">
+          <div className="h-screen overflow-y-scroll p-safe-bottom p-safe-top">
             <div className="mx-auto max-w-2xl py-8 px-8 sm:py-16 lg:py-24">
               <div className="text-center">
                 <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl">
@@ -154,7 +154,7 @@ export function Chat() {
               </div>
             </div>
             <Modal open={open} setOpen={setOpen} />
-            <div className="absolute bottom-0 left-0 w-full bg-[#111] pt-7">
+            <div className="absolute bottom-0 left-0 w-full bg-[#111] pt-5">
               <InputMessage
                 input={input}
                 setInput={setInput}
@@ -177,7 +177,7 @@ export function Chat() {
             <div className="bg-[#222]">{loading && <LoadingChatLine />}</div>
             <div
               ref={inputRef}
-              className="fixed bottom-0 left-0 w-full bg-[#111] pt-5"
+              className="absolute bottom-0 left-0 w-full bg-[#111] pt-5"
             >
               <InputMessage
                 input={input}
