@@ -13,8 +13,10 @@ export default function Home() {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <Chat />
+      <main className="relative w-full h-full overflow-hidden items-stretch flex-1">
+        <div className="flex-1 overflow-hidden">
+          <Chat />
+        </div>
       </main>
     </>
   );
