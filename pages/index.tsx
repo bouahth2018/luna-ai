@@ -207,14 +207,14 @@ export function Home() {
                 </div>
               </div>
               <Modal open={open} setOpen={setOpen} />
-            </div>
-            <div className="fixed bottom-0 left-0 w-full bg-[#111] pt-7">
-              <InputMessage
-                input={input}
-                setInput={setInput}
-                setLanding={setLanding}
-                sendMessage={sendMessage}
-              />
+              <div className="fixed bottom-0 left-0 w-full bg-[#111] pt-7">
+                <InputMessage
+                  input={input}
+                  setInput={setInput}
+                  setLanding={setLanding}
+                  sendMessage={sendMessage}
+                />
+              </div>
             </div>
           </>
         ) : (
@@ -228,18 +228,18 @@ export function Home() {
                 <MemoizedChatLine key={index} role={role} content={content} />
               ))}
               <div className="bg-[#222]">{loading && <LoadingChatLine />}</div>
-            </div>
-            <div
-              ref={inputRef}
-              className="fixed bottom-0 left-0 w-full bg-[#111] pt-7"
-            >
-              <InputMessage
-                input={input}
-                setInput={setInput}
-                setLanding={setLanding}
-                sendMessage={sendMessage}
-                isGenerating={isGenerating}
-              />
+              <div
+                ref={inputRef}
+                className="fixed bottom-0 left-0 w-full bg-[#111] pt-7"
+              >
+                <InputMessage
+                  input={input}
+                  setInput={setInput}
+                  setLanding={setLanding}
+                  sendMessage={sendMessage}
+                  isGenerating={isGenerating}
+                />
+              </div>
             </div>
           </>
         )}
