@@ -126,7 +126,7 @@ export function Chat() {
     <div>
       {landing == true ? (
         <>
-          <div className="h-screen overflow-y-scroll p-safe-bottom p-safe-top">
+          <div className="h-screen overflow-y-auto p-safe-bottom p-safe-top">
             <div className="mx-auto max-w-2xl py-8 px-8 sm:py-16 lg:py-24">
               <div className="text-center">
                 <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl">
@@ -169,7 +169,7 @@ export function Chat() {
           <div
             ref={chatRef}
             onScroll={handleScroll}
-            className="h-screen overflow-y-scroll p-safe-bottom p-safe-top"
+            className="h-screen overflow-y-auto p-safe-bottom p-safe-top"
           >
             {messages.map(({ content, role }, index) => (
               <MemoizedChatLine key={index} role={role} content={content} />
