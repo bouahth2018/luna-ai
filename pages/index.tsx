@@ -182,15 +182,15 @@ export function Home() {
       <main>
         {landing == true ? (
           <>
-            <div className="h-screen overflow-y-scroll">
-              <div className="mx-auto max-w-2xl py-32 px-8 sm:py-40 lg:py-48">
+            <div className="h-[calc(100vh-112px)] overflow-y-scroll">
+              <div className="mx-auto max-w-2xl py-8 px-8 sm:py-16 lg:py-24">
                 <div className="text-center">
                   <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
                     Luna AI, powered by ChatGPT
                   </h1>
                   <p className="mt-6 text-sm sm:text-base text-[#eaeaea]">
-                    Luna is a friendly and knowledgeable AI designed to assist
-                    and interact with humans.
+                    A friendly and knowledgeable AI designed to assist and
+                    interact with humans.
                   </p>
                 </div>
                 <div className="mt-8 flex justify-center text-center">
@@ -222,7 +222,7 @@ export function Home() {
             <div
               ref={chatRef}
               onScroll={handleScroll}
-              className="h-screen overflow-y-scroll pb-28"
+              className="h-[calc(100vh-112px)] overflow-y-scroll"
             >
               {messages.map(({ content, role }, index) => (
                 <MemoizedChatLine key={index} role={role} content={content} />
