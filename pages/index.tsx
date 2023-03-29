@@ -181,7 +181,7 @@ export function Home() {
       </Head>
       <main>
         {landing == true ? (
-          <div className="h-screen overflow-y-scroll">
+          <div className="h-screen">
             <div className="mx-auto max-w-2xl py-32 px-8 sm:py-40 lg:py-48">
               <div className="text-center">
                 <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
@@ -217,11 +217,7 @@ export function Home() {
             </div>
           </div>
         ) : (
-          <div
-            ref={chatRef}
-            onScroll={handleScroll}
-            className="h-screen overflow-y-scroll overflow-x-hidden pb-28"
-          >
+          <div ref={chatRef} onScroll={handleScroll} className="h-screen pb-28">
             {messages.map(({ content, role }, index) => (
               <MemoizedChatLine key={index} role={role} content={content} />
             ))}
