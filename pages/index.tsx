@@ -182,7 +182,7 @@ export function Home() {
       <main>
         {landing == true ? (
           <>
-            <div className="h-[calc(100vh-112px)] overflow-y-scroll">
+            <div className="h-[calc(100%-112px)] overflow-y-scroll">
               <div className="mx-auto max-w-2xl py-8 px-8 sm:py-16 lg:py-24">
                 <div className="text-center">
                   <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
