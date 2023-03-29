@@ -27,7 +27,7 @@ const InputMessage = ({
   isGenerating,
 }: any) => (
   <div>
-    <div className="mx-auto justify-center flex max-w-3xl mb-1">
+    <div className="mx-auto justify-center px-4 flex sm:max-w-xl md:max-w-2xl lg:max-w-3xl mb-1">
       <input
         type="text"
         aria-label="chat input"
@@ -48,7 +48,7 @@ const InputMessage = ({
       />
       <Button
         type="submit"
-        className="ml-4 flex-none"
+        className="ml-2 flex-none"
         onClick={() => {
           sendMessage(input);
           setInput("");
@@ -59,8 +59,8 @@ const InputMessage = ({
         Say
       </Button>
     </div>
-    <div className="mx-auto justify-center flex max-w-3xl mb-6">
-      <p className="text-sm font-light text-white/40">
+    <div className="mx-auto justify-center flex sm:max-w-xl md:max-w-2xl lg:max-w-3xl mb-6">
+      <p className="text-xs font-light text-white/40">
         Luna AI is using OpenAI&apos;s GPT3.5-turbo language model.
       </p>
     </div>
@@ -182,17 +182,17 @@ export function Home() {
       <main>
         {landing == true ? (
           <div className=" h-screen">
-            <div className="mx-auto max-w-2xl py-36 sm:py-48 lg:py-48">
+            <div className="mx-auto max-w-2xl py-32 px-8 sm:py-40 lg:py-48">
               <div className="text-center">
                 <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
                   Luna AI, powered by ChatGPT
                 </h1>
-                <p className="mt-6 text-lg leading-8 text-[#eaeaea]">
+                <p className="mt-6 text-sm sm:text-lg text-[#eaeaea]">
                   Luna is friendly and knowledgeable AI designed to assist and
                   interact with humans.
                 </p>
               </div>
-              <div className="hidden sm:mt-8 sm:flex sm:justify-center">
+              <div className="mt-8 flex justify-center text-center">
                 <div className="relative rounded-full py-1 px-3 text-sm leading-6 text-[#eaeaea] ring-1 ring-white/20 hover:ring-white/50">
                   We rely on your support to keep this service running.{" "}
                   <a
