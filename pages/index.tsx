@@ -181,32 +181,33 @@ export function Home() {
       </Head>
       <main>
         {landing == true ? (
-          <div className="h-screen overflow-y-scroll">
-            <div className="mx-auto max-w-2xl py-32 px-8 sm:py-40 lg:py-48">
-              <div className="text-center">
-                <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-                  Luna AI, powered by ChatGPT
-                </h1>
-                <p className="mt-6 text-sm sm:text-base text-[#eaeaea]">
-                  Luna is a friendly and knowledgeable AI designed to assist and
-                  interact with humans.
-                </p>
-              </div>
-              <div className="mt-8 flex justify-center text-center">
-                <div className="relative rounded-full py-1 px-3 text-sm leading-6 text-[#eaeaea] ring-1 ring-white/20 hover:ring-white/50">
-                  We rely on your support to keep this service running.{" "}
-                  <a
-                    className="font-bold text-cyan-500 cursor-pointer"
-                    onClick={handleOpenModal}
-                  >
-                    <span className="absolute inset-0" aria-hidden="true" />
-                    Donate <span aria-hidden="true">&rarr;</span>
-                  </a>
+          <>
+            <div className="h-screen overflow-y-scroll">
+              <div className="mx-auto max-w-2xl py-32 px-8 sm:py-40 lg:py-48">
+                <div className="text-center">
+                  <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+                    Luna AI, powered by ChatGPT
+                  </h1>
+                  <p className="mt-6 text-sm sm:text-base text-[#eaeaea]">
+                    Luna is a friendly and knowledgeable AI designed to assist
+                    and interact with humans.
+                  </p>
+                </div>
+                <div className="mt-8 flex justify-center text-center">
+                  <div className="relative rounded-full py-1 px-3 text-sm leading-6 text-[#eaeaea] ring-1 ring-white/20 hover:ring-white/50">
+                    We rely on your support to keep this service running.{" "}
+                    <a
+                      className="font-bold text-cyan-500 cursor-pointer"
+                      onClick={handleOpenModal}
+                    >
+                      <span className="absolute inset-0" aria-hidden="true" />
+                      Donate <span aria-hidden="true">&rarr;</span>
+                    </a>
+                  </div>
                 </div>
               </div>
+              <Modal open={open} setOpen={setOpen} />
             </div>
-            <Modal open={open} setOpen={setOpen} />
-
             <div className="fixed bottom-0 left-0 w-full bg-[#111] pt-7">
               <InputMessage
                 input={input}
@@ -215,18 +216,19 @@ export function Home() {
                 sendMessage={sendMessage}
               />
             </div>
-          </div>
+          </>
         ) : (
-          <div
-            ref={chatRef}
-            onScroll={handleScroll}
-            className="h-screen overflow-y-scroll pb-28"
-          >
-            {messages.map(({ content, role }, index) => (
-              <MemoizedChatLine key={index} role={role} content={content} />
-            ))}
-            <div className="bg-[#222]">{loading && <LoadingChatLine />}</div>
-
+          <>
+            <div
+              ref={chatRef}
+              onScroll={handleScroll}
+              className="h-screen overflow-y-scroll pb-28"
+            >
+              {messages.map(({ content, role }, index) => (
+                <MemoizedChatLine key={index} role={role} content={content} />
+              ))}
+              <div className="bg-[#222]">{loading && <LoadingChatLine />}</div>
+            </div>
             <div
               ref={inputRef}
               className="fixed bottom-0 left-0 w-full bg-[#111] pt-7"
@@ -239,7 +241,7 @@ export function Home() {
                 isGenerating={isGenerating}
               />
             </div>
-          </div>
+          </>
         )}
       </main>
     </>
