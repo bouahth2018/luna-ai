@@ -135,7 +135,7 @@ export function Chat() {
                   </span>
                   . Powered by ChatGPT
                 </h1>
-                <p className="mt-6 text-sm sm:text-base text-[#eaeaea]">
+                <p className="mt-6 text-md sm:text-base text-[#eaeaea]">
                   A friendly and knowledgeable AI designed to assist and
                   interact with humans.
                 </p>
@@ -169,7 +169,7 @@ export function Chat() {
           <div
             ref={chatRef}
             onScroll={handleScroll}
-            className="h-screen overflow-y-scroll"
+            className="h-screen overflow-y-scroll p-safe-bottom p-safe-top"
           >
             {messages.map(({ content, role }, index) => (
               <MemoizedChatLine key={index} role={role} content={content} />
@@ -177,7 +177,7 @@ export function Chat() {
             <div className="bg-[#222]">{loading && <LoadingChatLine />}</div>
             <div
               ref={inputRef}
-              className="sticky bottom-0 left-0 w-full bg-[#111] pt-7"
+              className="fixed bottom-0 left-0 w-full bg-[#111] pt-5"
             >
               <InputMessage
                 input={input}
@@ -187,6 +187,16 @@ export function Chat() {
                 isGenerating={isGenerating}
               />
             </div>
+
+            <style jsx>{`
+              .p-safe-top {
+                padding-top: env(safe-area-inset-top);
+              }
+
+              .p-safe-bottom {
+                padding-bottom: calc(env(safe-area-inset-bottom) + 6rem);
+              }
+            `}</style>
           </div>
         </>
       )}
