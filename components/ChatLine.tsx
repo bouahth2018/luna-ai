@@ -49,7 +49,7 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
             {role == "assistant" ? "Luna" : "You"}
           </p>
         </div>
-        <div className="flex ">
+        <div className="relative flex w-full flex-col">
           <div
             className={clsx(
               "text ",
@@ -62,7 +62,7 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
               </p>
             </div>
             <MemoizedReactMarkdown
-              className="prose prose-invert text-base md:w-screen"
+              className="prose prose-invert text-base w-full break-words"
               remarkPlugins={[remarkGfm, remarkMath]}
               rehypePlugins={[rehypeKatex]}
               components={{

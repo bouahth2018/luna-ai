@@ -61,7 +61,7 @@ const InputMessage = ({
     </div>
     <div className="mx-auto justify-center flex sm:max-w-xl md:max-w-2xl lg:max-w-3xl mb-6">
       <p className="text-xs font-light text-white/40">
-        Luna AI is using OpenAI&apos;s GPT3.5-turbo language model.
+        Luna AI uses OpenAI&apos;s GPT3.5-turbo language model.
       </p>
     </div>
   </div>
@@ -187,8 +187,8 @@ export function Home() {
                 <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
                   Luna AI, powered by ChatGPT
                 </h1>
-                <p className="mt-6 text-sm sm:text-lg text-[#eaeaea]">
-                  Luna is friendly and knowledgeable AI designed to assist and
+                <p className="mt-6 text-sm sm:text-base text-[#eaeaea]">
+                  Luna is a friendly and knowledgeable AI designed to assist and
                   interact with humans.
                 </p>
               </div>

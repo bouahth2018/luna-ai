@@ -28,7 +28,7 @@ export const CodeBlock: FC<Props> = memo(({ language, value }) => {
   };
 
   return (
-    <div className="codeblock relative font-sans">
+    <div className="codeblock relative font-sans overflow-x-scroll">
       <div className="flex items-center justify-between py-1.5 px-4">
         <span className="text-xs lowercase text-white">{language}</span>
 
@@ -50,7 +50,7 @@ export const CodeBlock: FC<Props> = memo(({ language, value }) => {
       <SyntaxHighlighter
         language={language}
         style={oneDark}
-        customStyle={{ margin: 0 }}
+        customStyle={{ margin: 0, width: "auto" }}
         PreTag="div"
       >
         {value}
