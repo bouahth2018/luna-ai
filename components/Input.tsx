@@ -9,7 +9,7 @@ export function InputMessage({
 }: any) {
   return (
     <div>
-      <div className="mx-auto justify-center px-4 flex sm:max-w-xl md:max-w-2xl lg:max-w-3xl mb-1">
+      <div className="mx-auto justify-center px-4 flex sm:max-w-xl md:max-w-2xl lg:max-w-3xl">
         <input
           type="text"
           aria-label="chat input"
@@ -41,7 +41,7 @@ export function InputMessage({
           Say
         </Button>
       </div>
-      <div className="mx-auto justify-center flex sm:max-w-xl md:max-w-2xl lg:max-w-3xl mb-6">
+      <div className="mx-auto justify-center flex sm:max-w-xl md:max-w-2xl lg:max-w-3xl pb-6">
         <p className="text-xs font-light text-white/40">
           Luna AI uses OpenAI&apos;s GPT3.5-turbo language model.
         </p>

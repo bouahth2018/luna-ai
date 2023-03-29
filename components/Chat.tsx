@@ -126,7 +126,7 @@ export function Chat() {
     <div>
       {landing == true ? (
         <>
-          <div className="h-screen overflow-y-scroll pb-28">
+          <div className="h-screen overflow-y-scroll">
             <div className="mx-auto max-w-2xl py-8 px-8 sm:py-16 lg:py-24">
               <div className="text-center">
                 <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl">
@@ -147,7 +147,7 @@ export function Chat() {
                     className="font-bold text-cyan-500 cursor-pointer"
                     onClick={handleOpenModal}
                   >
-                    <span className="absolute inset-0" aria-hidden="true" />
+                    <span className="sticky inset-0" aria-hidden="true" />
                     Donate <span aria-hidden="true">&rarr;</span>
                   </a>
                 </div>
@@ -169,7 +169,7 @@ export function Chat() {
           <div
             ref={chatRef}
             onScroll={handleScroll}
-            className="h-screen overflow-y-scroll pb-28"
+            className="h-screen overflow-y-scroll"
           >
             {messages.map(({ content, role }, index) => (
               <MemoizedChatLine key={index} role={role} content={content} />
@@ -177,7 +177,7 @@ export function Chat() {
             <div className="bg-[#222]">{loading && <LoadingChatLine />}</div>
             <div
               ref={inputRef}
-              className="absolute bottom-0 left-0 w-full bg-[#111] pt-7"
+              className="sticky bottom-0 left-0 w-full bg-[#111] pt-7"
             >
               <InputMessage
                 input={input}
