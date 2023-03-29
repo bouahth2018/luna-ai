@@ -4,6 +4,7 @@ import { CodeBlock } from "./Markdown/CodeBlock";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
+import { FC, memo } from "react";
 
 type ChatGPTAgent = "user" | "system" | "assistant";
 
@@ -112,3 +113,5 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
     </div>
   );
 }
+
+export const MemoizedChatLine = memo(ChatLine);

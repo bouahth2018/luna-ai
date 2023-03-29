@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { Button } from "../components/Button";
 import {
   type ChatGPTMessage,
-  ChatLine,
   LoadingChatLine,
+  MemoizedChatLine,
 } from "../components/ChatLine";
 import { useCookies } from "react-cookie";
 import Head from "next/head";
@@ -67,7 +67,7 @@ const InputMessage = ({
   </div>
 );
 
-export default function Home() {
+export function Home() {
   const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -84,7 +84,7 @@ export default function Home() {
     if (!chatRef.current) return;
 
     const { scrollTop, clientHeight, scrollHeight } = chatRef.current;
-    const threshold = 50;
+    const threshold = 10;
 
     if (scrollTop + clientHeight >= scrollHeight) {
       setAutoscroll(true);
@@ -223,7 +223,7 @@ export default function Home() {
             className="h-screen overflow-x-hidden pb-28"
           >
             {messages.map(({ content, role }, index) => (
-              <ChatLine key={index} role={role} content={content} />
+              <MemoizedChatLine key={index} role={role} content={content} />
             ))}
             <div className="bg-[#222]">{loading && <LoadingChatLine />}</div>
 
@@ -245,3 +245,5 @@ export default function Home() {
     </>
   );
 }
+
+export default memo(Home);
