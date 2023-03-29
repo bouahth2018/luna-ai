@@ -154,7 +154,7 @@ export function Chat() {
               </div>
             </div>
             <Modal open={open} setOpen={setOpen} />
-            <div className="absolute bottom-0 left-0 w-full bg-[#111] pt-5">
+            <div className="fixed bottom-0 left-0 w-full bg-[#111] pt-5">
               <InputMessage
                 input={input}
                 setInput={setInput}
@@ -177,7 +177,7 @@ export function Chat() {
             <div className="bg-[#222]">{loading && <LoadingChatLine />}</div>
             <div
               ref={inputRef}
-              className="absolute bottom-0 left-0 w-full bg-[#111] pt-5"
+              className="fixed bottom-0 left-0 w-full bg-[#111] pt-5"
             >
               <InputMessage
                 input={input}
