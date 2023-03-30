@@ -15,12 +15,14 @@ export interface ChatGPTMessage {
 
 // loading placeholder animation for the chat line
 export const LoadingChatLine = () => (
-  <div className="relative m-auto flex gap-4 px-4 py-6 text-base md:max-w-2xl md:py-8 lg:max-w-3xl md:px-0">
-    <div className="text-right">
-      <p className="font-large text-neutral-500 w-10">Luna</p>
-    </div>
-    <div className="flex">
-      <p className="animate-pulse font-black text-white">...</p>
+  <div className="px-4 pb-4 w-full">
+    <div className="text-base gap-4 md:gap-6 md:max-w-2xl lg:max-w-3xl p-4 md:py-6 flex lg:px-0 m-auto">
+      <div className="text-right">
+        <p className="font-large text-neutral-500 w-10">Luna</p>
+      </div>
+      <div className="flex">
+        <p className="animate-pulse font-black text-white">...</p>
+      </div>
     </div>
   </div>
 );
@@ -35,7 +37,7 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
 
   return (
     <div
-      className={`group px-4 ${
+      className={`group w-full px-4 pb-4 ${
         role != "assistant"
           ? "bg-[#111] clear-both"
           : "bg-[#222] text-white clear-both"
@@ -43,7 +45,7 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
       style={{ overflowWrap: "anywhere" }}
     >
       {/* <div className="mx-auto md:max-w-2xl lg:max-w-3xl px-4 py-8 ring-zinc-100 sm:px-8"> */}
-      <div className="relative m-auto flex gap-4 px-2 py-6 text-base md:max-w-2xl md:py-8 lg:max-w-3xl lg:px-0">
+      <div className="text-base gap-4 md:gap-6 md:max-w-2xl lg:max-w-3xl p-4 md:py-6 flex lg:px-0 m-auto">
         <div className="text-right hidden lg:block">
           <p className="font-large text-neutral-500 w-10">
             {role == "assistant" ? "Luna" : "You"}

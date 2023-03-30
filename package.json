@@ -24,6 +24,7 @@
     "react-cookie": "^4.1.1",
     "react-dom": "18.2.0",
     "react-markdown": "^8.0.6",
+    "react-scroll-to-bottom": "^4.2.0",
     "react-syntax-highlighter": "^15.5.0",
     "rehype-katex": "^6.0.2",
     "remark-gfm": "^3.0.1",
@@ -33,6 +34,7 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
+    "@types/react-scroll-to-bottom": "^4.2.0",
     "@types/react-syntax-highlighter": "^15.5.6",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.21",

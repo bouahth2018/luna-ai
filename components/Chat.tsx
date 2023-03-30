@@ -1,133 +1,25 @@
-import { memo, useEffect, useRef, useState } from "react";
-import {
-  type ChatGPTMessage,
-  LoadingChatLine,
-  MemoizedChatLine,
-} from "./ChatLine";
-import { useCookies } from "react-cookie";
+import { memo, useState } from "react";
+import { LoadingChatLine, MemoizedChatLine } from "./ChatLine";
 import Modal from "./Modal";
-import { InputMessage } from "./Input";
+import dynamic from "next/dynamic";
 
-const COOKIE_NAME = "nextjs-example-ai-chat-gpt3";
+const ScrollToBottom = dynamic(() => import("react-scroll-to-bottom"), {
+  ssr: false,
+});
 
-// default first message to display in UI (not necessary to define the prompt)
-export const initialMessages: ChatGPTMessage[] = [
-  {
-    role: "assistant",
-    content: "",
-  },
-];
-
-export function Chat() {
-  const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [cookie, setCookie] = useCookies([COOKIE_NAME]);
-  const [landing, setLanding] = useState<Boolean>(true);
+export function Chat({ landing, loading, messages }: any) {
   const [open, setOpen] = useState<Boolean>(false);
-
-  const [autoscroll, setAutoscroll] = useState<Boolean>(true);
-  const [isGenerating, setIsGenerating] = useState<Boolean>(false);
-  const chatRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLDivElement>(null);
-
-  const handleScroll = () => {
-    if (!chatRef.current) return;
-
-    const { scrollTop, clientHeight, scrollHeight } = chatRef.current;
-    const threshold = 10;
-
-    if (scrollTop + clientHeight >= scrollHeight) {
-      setAutoscroll(true);
-    } else if (scrollHeight - scrollTop <= clientHeight + threshold) {
-      setAutoscroll(true);
-    } else {
-      setAutoscroll(false);
-    }
-  };
-
-  useEffect(() => {
-    if (chatRef.current && autoscroll) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight;
-    }
-  }, [messages, autoscroll]);
 
   function handleOpenModal() {
     setOpen(true);
   }
 
-  useEffect(() => {
-    if (!cookie[COOKIE_NAME]) {
-      // generate a semi random short id
-      const randomId = Math.random().toString(36).substring(7);
-      setCookie(COOKIE_NAME, randomId);
-    }
-  }, [cookie, setCookie]);
-
-  // send message to API /api/chat endpoint
-  const sendMessage = async (message: string) => {
-    setLoading(true);
-    setIsGenerating(true);
-    const newMessages = [
-      ...messages,
-      { role: "user", content: message } as ChatGPTMessage,
-    ];
-    setMessages(newMessages);
-    const last10messages = newMessages.slice(-10); // remember last 10 messages
-
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        messages: last10messages,
-        user: cookie[COOKIE_NAME],
-      }),
-    });
-
-    // console.log("Edge function returned.");
-
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-
-    // This data is a ReadableStream
-    const data = response.body;
-    if (!data) {
-      return;
-    }
-
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    let done = false;
-
-    let lastMessage = "";
-
-    while (!done) {
-      setIsGenerating(true);
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      const chunkValue = decoder.decode(value);
-
-      lastMessage = lastMessage + chunkValue;
-
-      setMessages([
-        ...newMessages,
-        { role: "assistant", content: lastMessage } as ChatGPTMessage,
-      ]);
-
-      setLoading(false);
-      setIsGenerating(false);
-    }
-  };
-
   return (
-    <div>
+    <ScrollToBottom className="h-full">
       {landing == true ? (
         <>
-          <div className="h-screen overflow-y-auto p-safe-bottom p-safe-top">
-            <div className="mx-auto max-w-2xl py-8 px-8 sm:py-16 lg:py-24">
+          <div className="flex flex-col items-center">
+            <div className="w-full md:max-w-2xl lg:max-w-3xl md:h-full md:flex md:flex-col py-8 px-6 sm:py-16 lg:py-24">
               <div className="text-center">
                 <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl">
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
@@ -154,53 +46,22 @@ export function Chat() {
               </div>
             </div>
             <Modal open={open} setOpen={setOpen} />
-            <div className="fixed bottom-0 left-0 w-full bg-[#111] pt-5">
-              <InputMessage
-                input={input}
-                setInput={setInput}
-                setLanding={setLanding}
-                sendMessage={sendMessage}
-              />
-            </div>
           </div>
         </>
       ) : (
         <>
-          <div
-            ref={chatRef}
-            onScroll={handleScroll}
-            className="h-screen overflow-y-auto p-safe-bottom p-safe-top"
-          >
-            {messages.map(({ content, role }, index) => (
+          <div className="flex flex-col items-center">
+            {messages.map(({ content, role }: any, index: any) => (
               <MemoizedChatLine key={index} role={role} content={content} />
             ))}
-            <div className="bg-[#222]">{loading && <LoadingChatLine />}</div>
-            <div
-              ref={inputRef}
-              className="fixed bottom-0 left-0 w-full bg-[#111] pt-5"
-            >
-              <InputMessage
-                input={input}
-                setInput={setInput}
-                setLanding={setLanding}
-                sendMessage={sendMessage}
-                isGenerating={isGenerating}
-              />
+            <div className="bg-[#222] w-full">
+              {loading && <LoadingChatLine />}
             </div>
-
-            <style jsx>{`
-              .p-safe-top {
-                padding-top: env(safe-area-inset-top);
-              }
-
-              .p-safe-bottom {
-                padding-bottom: calc(env(safe-area-inset-bottom) + 6rem);
-              }
-            `}</style>
+            <div className="w-full h-28 flex-shrink-0"></div>
           </div>
         </>
       )}
-    </div>
+    </ScrollToBottom>
   );
 }
 
