@@ -1,14 +1,7 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { ChatGPTMessage } from "./ChatLine";
 import { useCookies } from "react-cookie";
-import {
-  FidgetSpinner,
-  Loader,
-  Loader2,
-  Loader3,
-  Send,
-  Whirl,
-} from "tabler-icons-react";
+import { Loader2, Send } from "tabler-icons-react";
 
 const COOKIE_NAME = "nextjs-example-ai-chat-gpt3";
 
@@ -186,3 +179,5 @@ export function InputMessage({
     </form>
   );
 }
+
+export default memo(InputMessage);
