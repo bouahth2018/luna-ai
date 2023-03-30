@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
-import { Button } from "./Button";
 import { ChatGPTMessage } from "./ChatLine";
 import { useCookies } from "react-cookie";
+import {
+  FidgetSpinner,
+  Loader,
+  Loader2,
+  Loader3,
+  Send,
+  Whirl,
+} from "tabler-icons-react";
 
 const COOKIE_NAME = "nextjs-example-ai-chat-gpt3";
 
@@ -14,6 +21,28 @@ export function InputMessage({
   const [input, setInput] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState<Boolean>(false);
   const [cookie, setCookie] = useCookies([COOKIE_NAME]);
+
+  const [height, setHeight] = useState<string>("auto");
+  console.log(height);
+
+  useEffect(() => {
+    const textarea = document.getElementById("textarea") as HTMLTextAreaElement;
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+    setHeight(`${textarea.scrollHeight}px`);
+  }, [height]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
+    // Set input first
+    setInput(e.target.value);
+
+    // Dynamically set the textarea height
+    setHeight("auto"); // reset height to auto to allow shrinking
+    const textarea = e.target as HTMLTextAreaElement;
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+    setHeight(`${textarea.scrollHeight}px`);
+  };
 
   useEffect(() => {
     if (!cookie[COOKIE_NAME]) {
@@ -82,44 +111,78 @@ export function InputMessage({
   };
 
   return (
-    <div className="h-[76px]">
-      <div className="mx-auto justify-center px-4 flex sm:max-w-xl md:max-w-2xl lg:max-w-3xl">
-        <input
-          type="text"
-          aria-label="chat input"
-          required
-          className="flex-auto appearance-none rounded-md bg-[#222] px-3 py-2 focus:outline-none focus:ring-0 caret-white text-white sm:text-sm"
-          value={input}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
+    <form className="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
+      <div className="relative flex h-full flex-1 md:flex-col">
+        <div className="flex flex-col w-full py-2 flex-grow md:pl-4 relative rounded-md bg-[#222]">
+          <textarea
+            aria-label="chat input"
+            required
+            id="textarea"
+            tabIndex={0}
+            rows={1}
+            style={{ maxHeight: "200px", height }}
+            placeholder="Send a message..."
+            className="m-0 my-auto w-full resize-none border-0 bg-transparent p-0 pr-10 focus:ring-0 focus:outline-none pl-2 md:pl-0 caret-white placeholder:text-[#777] text-white font-normal"
+            value={input}
+            onKeyDown={(e) => {
+              if (isGenerating) {
+                if (e.key === "Enter" && e.shiftKey) {
+                  const textarea = e.target as HTMLTextAreaElement;
+                  const start = textarea.selectionStart;
+                  const end = textarea.selectionEnd;
+                  const value = textarea.value;
+                  textarea.value = `${value.substring(
+                    0,
+                    start
+                  )}\n${value.substring(end)}`;
+                  textarea.selectionStart = textarea.selectionEnd = start + 1;
+                  setHeight(`${textarea.scrollHeight}px`);
+                } else if (e.key === "Enter") {
+                  e.preventDefault();
+                }
+              } else {
+                if (e.key === "Enter" && e.shiftKey) {
+                  const textarea = e.target as HTMLTextAreaElement;
+                  const start = textarea.selectionStart;
+                  const end = textarea.selectionEnd;
+                  const value = textarea.value;
+                  textarea.value = `${value.substring(
+                    0,
+                    start
+                  )}\n${value.substring(end)}`;
+                  textarea.selectionStart = textarea.selectionEnd = start + 1;
+                  setHeight(`${textarea.scrollHeight}px`);
+                } else if (e.key === "Enter") {
+                  e.preventDefault();
+                  sendMessage(input);
+                  setInput("");
+                  setLanding(false);
+                  setHeight("auto");
+                }
+              }
+            }}
+            onChange={handleChange}
+          />
+        </div>
+        {isGenerating ? (
+          <div className="absolute animate-spin mr-1 p-1 rounded-md text-[#999] bottom-1.5 md:botttom-2.5 right-1 md:right-2">
+            <Loader2 className="w-5 h-5" />
+          </div>
+        ) : (
+          <button
+            type="submit"
+            disabled={input == ""}
+            className="absolute p-1 rounded-md text-[#999] bottom-1.5 md:botttom-2.5 hover:bg-[#555] disabled:hover:bg-transparent right-1 md:right-2 disabled:opacity-40"
+            onClick={() => {
               sendMessage(input);
               setInput("");
               setLanding(false);
-            }
-          }}
-          // disabled={isGenerating}
-          onChange={(e) => {
-            setInput(e.target.value);
-          }}
-        />
-        <Button
-          type="submit"
-          className="ml-2 flex-none"
-          onClick={() => {
-            sendMessage(input);
-            setInput("");
-            setLanding(false);
-          }}
-          // disabled={isGenerating}
-        >
-          Say
-        </Button>
+            }}
+          >
+            <Send className="w-5 h-5 mr-1" />
+          </button>
+        )}
       </div>
-      <div className="mx-auto justify-center flex sm:max-w-xl md:max-w-2xl lg:max-w-3xl pt-2">
-        <p className="text-xs font-light text-white/40">
-          Luna AI uses OpenAI&apos;s GPT3.5-turbo language model.
-        </p>
-      </div>
-    </div>
+    </form>
   );
 }

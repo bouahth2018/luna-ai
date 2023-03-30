@@ -45,13 +45,18 @@ export default function Home() {
           <main className="relative h-full w-full flex flex-col overflow-hidden items-stretch flex-1">
             <div className="flex-1 overflow-hidden">
               <Chat landing={landing} loading={loading} messages={messages} />
-              <div className="absolute bottom-0 left-0 w-full bg-[#111] pt-6 h-28">
-                <InputMessage
-                  setLanding={setLanding}
-                  setLoading={setLoading}
-                  messages={messages}
-                  setMessages={setMessages}
-                />
+            </div>
+            <div className="absolute bottom-0 left-0 w-full bg-[#111] pt-4">
+              <InputMessage
+                setLanding={setLanding}
+                setLoading={setLoading}
+                messages={messages}
+                setMessages={setMessages}
+              />
+              <div className="px-3 pt-2 pb-4 text-center text-xs md:px-4 md:pt-3">
+                <p className="text-xs font-light text-white/40">
+                  Luna AI uses OpenAI&apos;s GPT3.5-turbo language model.
+                </p>
               </div>
             </div>
           </main>

@@ -39,7 +39,7 @@ export function Chat({ landing, loading, messages }: any) {
                     className="font-bold text-cyan-500 cursor-pointer"
                     onClick={handleOpenModal}
                   >
-                    <span className="sticky inset-0" aria-hidden="true" />
+                    <span className="absolute inset-0" aria-hidden="true" />
                     Donate <span aria-hidden="true">&rarr;</span>
                   </a>
                 </div>
@@ -57,7 +57,7 @@ export function Chat({ landing, loading, messages }: any) {
             <div className="bg-[#222] w-full">
               {loading && <LoadingChatLine />}
             </div>
-            <div className="w-full h-28 flex-shrink-0"></div>
+            <div className="w-full h-24 flex-shrink-0"></div>
           </div>
         </>
       )}

@@ -15,7 +15,7 @@ export interface ChatGPTMessage {
 
 // loading placeholder animation for the chat line
 export const LoadingChatLine = () => (
-  <div className="px-4 pb-4 w-full">
+  <div className="px-3 pb-4 w-full">
     <div className="text-base gap-4 md:gap-6 md:max-w-2xl lg:max-w-3xl p-4 md:py-6 flex lg:px-0 m-auto">
       <div className="text-right">
         <p className="font-large text-neutral-500 w-10">Luna</p>
