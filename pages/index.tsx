@@ -28,19 +28,35 @@ export default function Home() {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="relative h-full w-full flex flex-col overflow-hidden items-stretch flex-1">
-        <div className="flex-1 overflow-hidden">
-          <Chat landing={landing} loading={loading} messages={messages} />
-          <div className="absolute bottom-0 left-0 w-full bg-[#111] pt-6 h-28">
-            <InputMessage
-              setLanding={setLanding}
-              setLoading={setLoading}
-              messages={messages}
-              setMessages={setMessages}
-            />
+      <div className="overflow-hidden w-full h-full relative">
+        <div className="flex h-full flex-1 flex-col">
+          <div
+            className={`sticky top-0 z-10 items-center h-12 bg-black ${
+              landing ? "hidden" : "flex"
+            }`}
+          >
+            <h1 className="flex-1 text-center text-lg font-bold tracking-tight text-white">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
+                Luna AI
+              </span>
+              . Powered by ChatGPT
+            </h1>
           </div>
+          <main className="relative h-full w-full flex flex-col overflow-hidden items-stretch flex-1">
+            <div className="flex-1 overflow-hidden">
+              <Chat landing={landing} loading={loading} messages={messages} />
+              <div className="absolute bottom-0 left-0 w-full bg-[#111] pt-6 h-28">
+                <InputMessage
+                  setLanding={setLanding}
+                  setLoading={setLoading}
+                  messages={messages}
+                  setMessages={setMessages}
+                />
+              </div>
+            </div>
+          </main>
         </div>
-      </main>
+      </div>
     </>
   );
 }
