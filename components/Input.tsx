@@ -1,12 +1,13 @@
 import { memo, useEffect, useState } from "react";
 import { ChatGPTMessage } from "./ChatLine";
 import { useCookies } from "react-cookie";
-import { Loader2, Send } from "tabler-icons-react";
+import { Loader2, PlayerStop, Refresh, Send } from "tabler-icons-react";
 
 const COOKIE_NAME = "nextjs-example-ai-chat-gpt3";
 
 export function InputMessage({
   setLanding,
+  loading,
   setLoading,
   messages,
   setMessages,
@@ -164,25 +165,41 @@ export function InputMessage({
             onKeyDown={handleKeyDown}
             onChange={handleChange}
           />
+          {isGenerating ? (
+            <div className="absolute animate-spin mr-1 p-1 rounded-md text-[#999] bottom-1.5 md:botttom-2.5 right-1 md:right-2">
+              <Loader2 className="w-5 h-5" />
+            </div>
+          ) : (
+            <button
+              type="submit"
+              disabled={!input.trim()}
+              className="absolute p-1 rounded-md text-[#999] bottom-1.5 md:botttom-2.5 hover:bg-[#555] disabled:hover:bg-transparent right-1 md:right-2 disabled:opacity-40"
+              onClick={() => {
+                sendMessage(input);
+                setInput("");
+                setLanding(false);
+                setHeight("auto");
+              }}
+            >
+              <Send className="w-5 h-5 mr-1" />
+            </button>
+          )}
         </div>
-        {isGenerating ? (
-          <div className="absolute animate-spin mr-1 p-1 rounded-md text-[#999] bottom-1.5 md:botttom-2.5 right-1 md:right-2">
-            <Loader2 className="w-5 h-5" />
+        {!loading && messages.length > 1 && (
+          <div className="flex md:hidden ml-1 md:w-full md:m-auto md:mb-2 gap-0 md:gap-2 justify-center">
+            {/* Put a conditional statement here for when you need to stop the AI from responding or re-entering the last prompt */}
+            <button className="relative py-2 px-3 text-[#999]">
+              {isGenerating ? (
+                <div className="flex w-full items-center justify-center gap-2">
+                  <PlayerStop className="w-5 h-5" />
+                </div>
+              ) : (
+                <div className="flex w-full items-center justify-center gap-2 rounded-md active:bg-[#222]">
+                  <Refresh className="w-5 h-5" />
+                </div>
+              )}
+            </button>
           </div>
-        ) : (
-          <button
-            type="submit"
-            disabled={!input.trim()}
-            className="absolute p-1 rounded-md text-[#999] bottom-1.5 md:botttom-2.5 hover:bg-[#555] disabled:hover:bg-transparent right-1 md:right-2 disabled:opacity-40"
-            onClick={() => {
-              sendMessage(input);
-              setInput("");
-              setLanding(false);
-              setHeight("auto");
-            }}
-          >
-            <Send className="w-5 h-5 mr-1" />
-          </button>
         )}
       </div>
     </form>
