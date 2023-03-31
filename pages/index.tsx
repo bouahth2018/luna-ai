@@ -2,7 +2,7 @@ import { Chat } from "@/components/Chat";
 import { ChatGPTMessage } from "@/components/ChatLine";
 import { InputMessage } from "@/components/Input";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // default first message to display in UI (not necessary to define the prompt)
 export const initialMessages: ChatGPTMessage[] = [
@@ -13,9 +13,16 @@ export const initialMessages: ChatGPTMessage[] = [
 ];
 
 export default function Home() {
-  const [landing, setLanding] = useState<Boolean>(true);
+  const [landing, setLanding] = useState<boolean>(true);
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages);
+  const [currentMessage, setCurrentMessage] = useState<ChatGPTMessage>();
+
+  const stopGeneratingRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    setCurrentMessage(messages[messages.length - 2]);
+  }, [messages]);
 
   return (
     <>
@@ -46,13 +53,15 @@ export default function Home() {
             <div className="flex-1 overflow-hidden">
               <Chat landing={landing} loading={loading} messages={messages} />
             </div>
-            <div className="absolute bottom-0 left-0 w-full bg-[#111] pt-4">
+            <div className="absolute bottom-0 left-0 w-full bg-[#111] pt-4 md:!bg-transparent md:bg-gradient-to-t from-[#111] from-75% via-[#111] via-75%">
               <InputMessage
                 setLanding={setLanding}
                 loading={loading}
                 setLoading={setLoading}
                 messages={messages}
                 setMessages={setMessages}
+                currentMessage={currentMessage}
+                stopGeneratingRef={stopGeneratingRef}
               />
               <div className="px-3 pt-2 pb-4 text-center text-xs md:px-4 md:pt-3">
                 <p className="text-xs font-light text-white/40">
