@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { FC, memo, useEffect, useState } from "react";
 import { ChatGPTMessage } from "./ChatLine";
 import { useCookies } from "react-cookie";
 import { Loader2, PlayerStop, Refresh, Send } from "tabler-icons-react";
@@ -10,7 +10,9 @@ export function InputMessage({
   loading,
   setLoading,
   messages,
+  currentMessage,
   setMessages,
+  stopGeneratingRef,
 }: any) {
   const [input, setInput] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState<Boolean>(false);
@@ -91,9 +93,17 @@ export function InputMessage({
   }, [cookie, setCookie]);
 
   // send message to API /api/chat endpoint
-  const sendMessage = async (message: string) => {
+  const sendMessage = async (message: string, deleteCount = 0) => {
     setLoading(true);
     setIsGenerating(true);
+
+    if (deleteCount) {
+      const updatedMessages = messages;
+      for (let i = 0; i < deleteCount; i++) {
+        updatedMessages.pop();
+      }
+    }
+
     const newMessages = [
       ...messages,
       { role: "user", content: message } as ChatGPTMessage,
@@ -101,11 +111,13 @@ export function InputMessage({
     setMessages(newMessages);
     const last10messages = newMessages.slice(-10); // remember last 10 messages
 
+    const controller = new AbortController();
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      signal: controller.signal,
       body: JSON.stringify({
         messages: last10messages,
         user: cookie[COOKIE_NAME],
@@ -132,6 +144,12 @@ export function InputMessage({
 
     while (!done) {
       setIsGenerating(true);
+      if (stopGeneratingRef.current === true) {
+        setIsGenerating(false);
+        controller.abort();
+        done = true;
+        break;
+      }
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
       const chunkValue = decoder.decode(value);
@@ -148,9 +166,49 @@ export function InputMessage({
     }
   };
 
+  function handleStopGenerating() {
+    stopGeneratingRef.current = true;
+    setTimeout(() => {
+      stopGeneratingRef.current = false;
+    }, 1000);
+  }
+
+  function handleRegenerateResponse() {
+    if (currentMessage) {
+      sendMessage(currentMessage.content, 2);
+    }
+  }
+
   return (
     <form className="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
       <div className="relative flex h-full flex-1 md:flex-col">
+        {!loading && messages.length > 1 && (
+          <div className="hidden md:flex ml-1 md:w-full md:m-auto md:mb-2 gap-0 md:gap-2 justify-center">
+            {isGenerating ? (
+              <button
+                type="button"
+                onClick={handleStopGenerating}
+                className="relative rounded-md bg-transparent px-3 py-2 text-sm text-[#999] shadow-sm ring-1 ring-inset ring-[#555] hover:bg-[#222]"
+              >
+                <div className="flex w-full items-center justify-center gap-2">
+                  <PlayerStop className="w-4 h-4" />
+                  Stop generating
+                </div>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleRegenerateResponse}
+                className="relative rounded-md bg-transparent px-3 py-2 text-sm text-[#999] shadow-sm ring-1 ring-inset ring-[#555] hover:bg-[#222]"
+              >
+                <div className="flex w-full items-center justify-center gap-2">
+                  <Refresh className="w-4 h-4" />
+                  Regenerate response
+                </div>
+              </button>
+            )}
+          </div>
+        )}
         <div className="flex flex-col w-full py-2 flex-grow md:pl-4 relative rounded-md bg-[#222]">
           <textarea
             aria-label="chat input"
@@ -188,17 +246,27 @@ export function InputMessage({
         {!loading && messages.length > 1 && (
           <div className="flex md:hidden ml-1 md:w-full md:m-auto md:mb-2 gap-0 md:gap-2 justify-center">
             {/* Put a conditional statement here for when you need to stop the AI from responding or re-entering the last prompt */}
-            <button className="relative py-2 px-3 text-[#999]">
-              {isGenerating ? (
+            {isGenerating ? (
+              <button
+                type="button"
+                onClick={handleStopGenerating}
+                className="relative py-2 px-3 text-[#999]"
+              >
                 <div className="flex w-full items-center justify-center gap-2">
                   <PlayerStop className="w-5 h-5" />
                 </div>
-              ) : (
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleRegenerateResponse}
+                className="relative py-2 px-3 text-[#999]"
+              >
                 <div className="flex w-full items-center justify-center gap-2 rounded-md active:bg-[#222]">
                   <Refresh className="w-5 h-5" />
                 </div>
-              )}
-            </button>
+              </button>
+            )}
           </div>
         )}
       </div>
