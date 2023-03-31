@@ -49,6 +49,7 @@ export default function Home() {
             <div className="absolute bottom-0 left-0 w-full bg-[#111] pt-4">
               <InputMessage
                 setLanding={setLanding}
+                loading={loading}
                 setLoading={setLoading}
                 messages={messages}
                 setMessages={setMessages}
