@@ -14,9 +14,7 @@ export function InputMessage({
   const [input, setInput] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState<Boolean>(false);
   const [cookie, setCookie] = useCookies([COOKIE_NAME]);
-
   const [height, setHeight] = useState<string>("auto");
-  console.log(height);
 
   useEffect(() => {
     const textarea = document.getElementById("textarea") as HTMLTextAreaElement;
@@ -35,6 +33,52 @@ export function InputMessage({
     textarea.style.height = "auto";
     textarea.style.height = `${textarea.scrollHeight}px`;
     setHeight(`${textarea.scrollHeight}px`);
+  };
+
+  const handleKeyDown = (e: any): void => {
+    const userAgent = navigator.userAgent;
+    const isMobile = /Mobile/.test(userAgent);
+
+    if (isGenerating) {
+      if (!isMobile) {
+        if (e.shiftKey && e.key === "Enter") {
+          e.preventDefault();
+          const textarea = e.target as HTMLTextAreaElement;
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          const value = textarea.value;
+          textarea.value =
+            value.substring(0, start) + "\n" + value.substring(end);
+          textarea.selectionStart = textarea.selectionEnd = start + 1;
+          setHeight(`${textarea.scrollHeight}px`);
+        } else if (e.key === "Enter") {
+          e.preventDefault();
+        }
+      }
+    } else {
+      if (!isMobile) {
+        if (e.shiftKey && e.key === "Enter") {
+          const textarea = e.target as HTMLTextAreaElement;
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          const value = textarea.value;
+          textarea.value =
+            value.substring(0, start) + "\n" + value.substring(end);
+          textarea.selectionStart = textarea.selectionEnd = start + 1;
+          setHeight(`${textarea.scrollHeight}px`);
+        } else if (e.key === "Enter") {
+          if (input.trim()) {
+            e.preventDefault();
+            sendMessage(input);
+            setInput("");
+            setLanding(false);
+            setHeight("auto");
+          } else {
+            e.preventDefault();
+          }
+        }
+      }
+    }
   };
 
   useEffect(() => {
@@ -117,43 +161,7 @@ export function InputMessage({
             placeholder="Send a message..."
             className="m-0 my-auto w-full resize-none border-0 bg-transparent p-0 pr-10 focus:ring-0 focus:outline-none pl-2 md:pl-0 caret-white placeholder:text-[#777] text-white font-normal"
             value={input}
-            onKeyDown={(e) => {
-              if (isGenerating) {
-                if (e.key === "Enter" && e.shiftKey) {
-                  const textarea = e.target as HTMLTextAreaElement;
-                  const start = textarea.selectionStart;
-                  const end = textarea.selectionEnd;
-                  const value = textarea.value;
-                  textarea.value = `${value.substring(
-                    0,
-                    start
-                  )}\n${value.substring(end)}`;
-                  textarea.selectionStart = textarea.selectionEnd = start + 1;
-                  setHeight(`${textarea.scrollHeight}px`);
-                } else if (e.key === "Enter") {
-                  e.preventDefault();
-                }
-              } else {
-                if (e.key === "Enter" && e.shiftKey) {
-                  const textarea = e.target as HTMLTextAreaElement;
-                  const start = textarea.selectionStart;
-                  const end = textarea.selectionEnd;
-                  const value = textarea.value;
-                  textarea.value = `${value.substring(
-                    0,
-                    start
-                  )}\n${value.substring(end)}`;
-                  textarea.selectionStart = textarea.selectionEnd = start + 1;
-                  setHeight(`${textarea.scrollHeight}px`);
-                } else if (e.key === "Enter") {
-                  e.preventDefault();
-                  sendMessage(input);
-                  setInput("");
-                  setLanding(false);
-                  setHeight("auto");
-                }
-              }
-            }}
+            onKeyDown={handleKeyDown}
             onChange={handleChange}
           />
         </div>
@@ -164,12 +172,13 @@ export function InputMessage({
         ) : (
           <button
             type="submit"
-            disabled={input == ""}
+            disabled={!input.trim()}
             className="absolute p-1 rounded-md text-[#999] bottom-1.5 md:botttom-2.5 hover:bg-[#555] disabled:hover:bg-transparent right-1 md:right-2 disabled:opacity-40"
             onClick={() => {
               sendMessage(input);
               setInput("");
               setLanding(false);
+              setHeight("auto");
             }}
           >
             <Send className="w-5 h-5 mr-1" />
