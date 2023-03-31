@@ -64,7 +64,7 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
               </p>
             </div>
             <MemoizedReactMarkdown
-              className="prose prose-invert text-base w-full break-words"
+              className="prose prose-invert text-base w-full"
               remarkPlugins={[remarkGfm, remarkMath]}
               rehypePlugins={[rehypeKatex]}
               components={{
