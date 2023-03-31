@@ -1,7 +1,9 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { LoadingChatLine, MemoizedChatLine } from "./ChatLine";
 import Modal from "./Modal";
 import dynamic from "next/dynamic";
+import { ArrowDown } from "tabler-icons-react";
+import { Message } from "@/types";
 
 const ScrollToBottom = dynamic(() => import("react-scroll-to-bottom"), {
   ssr: false,
@@ -9,6 +11,14 @@ const ScrollToBottom = dynamic(() => import("react-scroll-to-bottom"), {
 
 export function Chat({ landing, loading, messages }: any) {
   const [open, setOpen] = useState<Boolean>(false);
+  const [showButton, setShowButton] = useState(false);
+
+  const [currentMessage, setCurrentMessage] = useState<Message>();
+  console.log(currentMessage);
+
+  useEffect(() => {
+    setCurrentMessage(messages[messages.length - 2]);
+  }, [messages]);
 
   function handleOpenModal() {
     setOpen(true);
@@ -59,6 +69,11 @@ export function Chat({ landing, loading, messages }: any) {
             </div>
             <div className="w-full h-24 flex-shrink-0"></div>
           </div>
+          {showButton && (
+            <button className="cursor-pointer absolute right-6 bottom-[105px] md:bottom-[112px] z-10 rounded-full border border-white/10 bg-white/10 text-white/80">
+              <ArrowDown className="h-5 w-5 m-1" />
+            </button>
+          )}
         </>
       )}
     </ScrollToBottom>
