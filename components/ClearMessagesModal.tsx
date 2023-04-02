@@ -58,8 +58,9 @@ export default function ClearMessagesModal({
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-[#999]">
-                        Are you sure you want to clear your conversation? This
-                        action cannot be undone.
+                        Are you sure you want to clear your conversation?
+                        Clearing the conversation will reset the chat context.
+                        This action cannot be undone.
                       </p>
                     </div>
                   </div>
