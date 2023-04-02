@@ -1,8 +1,10 @@
 import { Chat } from "@/components/Chat";
 import { ChatGPTMessage } from "@/components/ChatLine";
+import ClearMessagesModal from "@/components/ClearMessagesModal";
 import { InputMessage } from "@/components/Input";
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
+import { MessageOff } from "tabler-icons-react";
 
 // default first message to display in UI (not necessary to define the prompt)
 export const initialMessages: ChatGPTMessage[] = [
@@ -15,14 +17,22 @@ export const initialMessages: ChatGPTMessage[] = [
 export default function Home() {
   const [landing, setLanding] = useState<boolean>(true);
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages);
+  const [messages, setMessages] = useState<ChatGPTMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState<ChatGPTMessage>();
+  const [messageError, setMessageError] = useState<boolean>(false);
+  const [confirmClear, setConfirmClear] = useState<boolean>(false);
+
+  console.log("MessageError: ", messageError);
 
   const stopGeneratingRef = useRef<boolean>(false);
 
   useEffect(() => {
     setCurrentMessage(messages[messages.length - 2]);
   }, [messages]);
+
+  function handleConfirmClear() {
+    setConfirmClear(true);
+  }
 
   return (
     <>
@@ -37,17 +47,30 @@ export default function Home() {
       </Head>
       <div className="overflow-hidden w-full h-full relative">
         <div className="flex h-full flex-1 flex-col">
+          <ClearMessagesModal
+            confirmClear={confirmClear}
+            setConfirmClear={setConfirmClear}
+            setMessages={setMessages}
+            setLanding={setLanding}
+          />
           <div
-            className={`sticky top-0 z-10 items-center h-12 bg-black ${
+            className={`sticky top-0 z-10 items-center h-12 bg-black text-white ${
               landing ? "hidden" : "flex"
             }`}
           >
-            <h1 className="flex-1 text-center text-lg font-bold tracking-tight text-white">
+            <h1 className="flex-1 text-center text-lg font-bold tracking-tight">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
                 Luna AI
               </span>
               . Powered by ChatGPT
             </h1>
+            <button
+              type="button"
+              className="pr-3 text-[#999]"
+              onClick={handleConfirmClear}
+            >
+              <MessageOff className="h-5 w-5" />
+            </button>
           </div>
           <main className="relative h-full w-full flex flex-col overflow-hidden items-stretch flex-1">
             <div className="flex-1 overflow-hidden">
@@ -62,6 +85,7 @@ export default function Home() {
                 setMessages={setMessages}
                 currentMessage={currentMessage}
                 stopGeneratingRef={stopGeneratingRef}
+                setMessageError={setMessageError}
               />
               <div className="px-3 pt-2 pb-4 text-center text-xs md:px-4 md:pt-3">
                 <p className="text-xs font-light text-white/40">

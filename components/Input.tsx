@@ -13,6 +13,7 @@ export function InputMessage({
   currentMessage,
   setMessages,
   stopGeneratingRef,
+  setMessageError,
 }: any) {
   const [input, setInput] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState<Boolean>(false);
@@ -96,6 +97,7 @@ export function InputMessage({
   const sendMessage = async (message: string, deleteCount = 0) => {
     setLoading(true);
     setIsGenerating(true);
+    setMessageError(false);
 
     if (deleteCount) {
       const updatedMessages = messages;
@@ -127,12 +129,16 @@ export function InputMessage({
     // console.log("Edge function returned.");
 
     if (!response.ok) {
+      setMessageError(true);
       throw new Error(response.statusText);
     }
 
     // This data is a ReadableStream
     const data = response.body;
     if (!data) {
+      setLoading(false);
+      setIsGenerating(false);
+      setMessageError(true);
       return;
     }
 
@@ -182,7 +188,7 @@ export function InputMessage({
   return (
     <form className="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
       <div className="relative flex h-full flex-1 md:flex-col">
-        {!loading && messages.length > 1 && (
+        {!loading && messages.length > 0 && (
           <div className="hidden md:flex ml-1 md:w-full md:m-auto md:mb-2 gap-0 md:gap-2 justify-center">
             {isGenerating ? (
               <button
@@ -243,7 +249,7 @@ export function InputMessage({
             </button>
           )}
         </div>
-        {!loading && messages.length > 1 && (
+        {!loading && messages.length > 0 && (
           <div className="flex md:hidden ml-1 md:w-full md:m-auto md:mb-2 gap-0 md:gap-2 justify-center">
             {/* Put a conditional statement here for when you need to stop the AI from responding or re-entering the last prompt */}
             {isGenerating ? (

@@ -21,6 +21,7 @@ export function Chat({ landing, loading, messages }: any) {
       {landing == true ? (
         <>
           <div className="flex flex-col items-center">
+            <Modal open={open} setOpen={setOpen} />
             <div className="w-full md:max-w-2xl lg:max-w-3xl md:h-full md:flex md:flex-col py-8 px-6 sm:py-16 lg:py-24">
               <div className="text-center">
                 <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl">
@@ -47,7 +48,6 @@ export function Chat({ landing, loading, messages }: any) {
                 </div>
               </div>
             </div>
-            <Modal open={open} setOpen={setOpen} />
           </div>
         </>
       ) : (
