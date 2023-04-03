@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { ChatGPTMessage } from "./ChatLine";
 import { useCookies } from "react-cookie";
 import { Loader2, PlayerStop, Refresh, Send } from "tabler-icons-react";
