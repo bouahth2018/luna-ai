@@ -1,5 +1,5 @@
-import { FC, MutableRefObject, memo, useEffect, useRef, useState } from "react";
-import { ChatGPTMessage, LoadingChatLine, MemoizedChatLine } from "./ChatLine";
+import { memo, useState } from "react";
+import { LoadingChatLine, MemoizedChatLine } from "./ChatLine";
 import Modal from "./Modal";
 import dynamic from "next/dynamic";
 import { ArrowDown } from "tabler-icons-react";
@@ -22,7 +22,7 @@ export function Chat({ landing, loading, messages }: any) {
         <>
           <div className="flex flex-col items-center">
             <Modal open={open} setOpen={setOpen} />
-            <div className="w-full md:max-w-2xl lg:max-w-3xl md:h-full md:flex md:flex-col py-8 px-6 sm:py-16 lg:py-24">
+            <div className="w-full md:max-w-2xl lg:max-w-3xl md:h-full md:flex md:flex-col mt-20 px-6 md:mt-40">
               <div className="text-center">
                 <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl">
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
