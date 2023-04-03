@@ -22,7 +22,7 @@ export default function Home() {
   const [messageError, setMessageError] = useState<boolean>(false);
   const [confirmClear, setConfirmClear] = useState<boolean>(false);
 
-  console.log("MessageError: ", messageError);
+  // console.log("MessageError: ", messageError);
 
   const stopGeneratingRef = useRef<boolean>(false);
 
