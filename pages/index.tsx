@@ -2,9 +2,13 @@ import { Chat } from "@/components/Chat";
 import { ChatGPTMessage } from "@/components/ChatLine";
 import ClearMessagesModal from "@/components/ClearMessagesModal";
 import { InputMessage } from "@/components/Input";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
+import { getSession, signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 import { MessageOff } from "tabler-icons-react";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 // default first message to display in UI (not necessary to define the prompt)
 export const initialMessages: ChatGPTMessage[] = [
@@ -73,6 +77,9 @@ export default function Home() {
             </button>
           </div>
           <main className="relative h-full w-full flex flex-col overflow-hidden items-stretch flex-1">
+            <button className="text-white" onClick={() => signOut()}>
+              Signout
+            </button>
             <div className="flex-1 overflow-hidden">
               <Chat landing={landing} loading={loading} messages={messages} />
             </div>
@@ -98,4 +105,23 @@ export default function Home() {
       </div>
     </>
   );
+}
+
+export async function getServerSideProps(context: any) {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth/signin",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      session,
+    },
+  };
 }
