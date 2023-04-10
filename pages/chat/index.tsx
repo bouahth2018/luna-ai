@@ -1,12 +1,8 @@
 import { Chat } from "@/components/Chat";
 import { ChatGPTMessage } from "@/components/ChatLine";
-import ClearMessagesModal from "@/components/ClearMessagesModal";
 import { InputMessage } from "@/components/Input";
 import { getServerSession } from "next-auth";
-import { signOut } from "next-auth/react";
-import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
-import { MessageOff } from "tabler-icons-react";
 import { authOptions } from "../api/auth/[...nextauth]";
 import Layout from "@/components/Layout";
 
@@ -24,7 +20,6 @@ export default function ChatHome() {
   const [messages, setMessages] = useState<ChatGPTMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState<ChatGPTMessage>();
   const [messageError, setMessageError] = useState<boolean>(false);
-  const [confirmClear, setConfirmClear] = useState<boolean>(false);
 
   // console.log("MessageError: ", messageError);
 
@@ -34,12 +29,8 @@ export default function ChatHome() {
     setCurrentMessage(messages[messages.length - 2]);
   }, [messages]);
 
-  function handleConfirmClear() {
-    setConfirmClear(true);
-  }
-
   return (
-    <Layout landing={landing}>
+    <Layout>
       <div className="flex-1 overflow-hidden">
         <Chat landing={landing} loading={loading} messages={messages} />
       </div>

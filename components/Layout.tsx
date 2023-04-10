@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import { Dialog, Menu, Transition } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 import {
   ArrowRightOnRectangleIcon,
   Bars3Icon,
@@ -21,7 +21,7 @@ const navigation = [
   { name: "Reports", href: "#", current: false },
 ];
 
-export default function Layout({ children, landing }: any) {
+export default function Layout({ children }: any) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -166,8 +166,8 @@ export default function Layout({ children, landing }: any) {
                           className={clsx(
                             item.current
                               ? "from-[#222]"
-                              : "group-hover:from-[#111]",
-                            "absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l from-black"
+                              : "group-hover:from-[#111] from-black",
+                            "absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l"
                           )}
                         ></div>
                       </div>
