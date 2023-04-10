@@ -26,12 +26,12 @@ export default function SignIn({
             key={provider.name}
             className="w-full max-w-xs self-center block"
           >
-            {/* {provider.name === "Discord" && (
+            {provider.name === "Discord" && (
               <>
                 <span className="block relative box-border">
                   <button
                     onClick={() => signIn(provider.id)}
-                    className="min-w-full max-w-full h-12 px-3 flex justify-center items-center rounded-md bg-indigo-500 text-white"
+                    className="min-w-full max-w-full h-12 px-3 flex justify-center items-center rounded-md bg-[#333] hover:bg-[#444] text-white"
                   >
                     <span className="flex mr-2">
                       <svg
@@ -49,7 +49,7 @@ export default function SignIn({
                 </span>
                 <span className="mt-[11px] block w-[1px] h-[1px] min-w-[1px] min-h-[1px] ml-6"></span>
               </>
-            )} */}
+            )}
             {/* {provider.name === "Facebook" && (
               <>
                 <span className="block relative box-border">
