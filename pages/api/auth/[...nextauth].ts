@@ -15,10 +15,6 @@ export const authOptions: NextAuthOptions = {
     //   clientSecret: process.env.DISCORD_CLIENT_SECRET,
     //   authorization: { params: { scope: ["identify email"].join(" ") } },
     // }),
-    // FacebookProvider({
-    //   clientId: process.env.FACEBOOK_CLIENT_ID,
-    //   clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-    // }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,

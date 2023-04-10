@@ -215,7 +215,7 @@ export function InputMessage({
             )}
           </div>
         )}
-        <div className="flex flex-col w-full py-2 flex-grow md:pl-4 relative rounded-md bg-[#222]">
+        <div className="flex flex-col w-full py-2 md:py-2.5 flex-grow md:pl-4 relative rounded-md bg-[#222]">
           <textarea
             aria-label="chat input"
             required
@@ -224,7 +224,7 @@ export function InputMessage({
             rows={1}
             style={{ maxHeight: "200px", height }}
             placeholder="Send a message..."
-            className="m-0 my-auto w-full resize-none border-0 bg-transparent p-0 pr-10 focus:ring-0 focus:outline-none pl-2 md:pl-0 caret-white placeholder:text-[#777] text-white font-normal"
+            className="m-0 w-full resize-none border-0 bg-transparent p-0 pr-10 focus:ring-0 focus:outline-none pl-2 md:pl-0 caret-white placeholder:text-[#777] text-white font-normal"
             value={input}
             onKeyDown={handleKeyDown}
             onChange={handleChange}
