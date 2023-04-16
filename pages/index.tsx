@@ -9,14 +9,6 @@ import { useEffect, useRef, useState } from "react";
 import { MessageOff } from "tabler-icons-react";
 import { authOptions } from "./api/auth/[...nextauth]";
 
-// default first message to display in UI (not necessary to define the prompt)
-export const initialMessages: ChatGPTMessage[] = [
-  {
-    role: "assistant",
-    content: "",
-  },
-];
-
 export default function Home() {
   const [landing, setLanding] = useState<boolean>(true);
   const [loading, setLoading] = useState(false);
@@ -24,8 +16,6 @@ export default function Home() {
   const [currentMessage, setCurrentMessage] = useState<ChatGPTMessage>();
   const [messageError, setMessageError] = useState<boolean>(false);
   const [confirmClear, setConfirmClear] = useState<boolean>(false);
-
-  // console.log("MessageError: ", messageError);
 
   const stopGeneratingRef = useRef<boolean>(false);
 
@@ -121,6 +111,10 @@ export async function getServerSideProps(context: any) {
   return {
     props: {
       session,
+    },
+    redirect: {
+      destination: "/chat",
+      permanent: false,
     },
   };
 }

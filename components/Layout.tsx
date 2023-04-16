@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, memo, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   ArrowRightOnRectangleIcon,
@@ -10,7 +10,13 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import clsx from "clsx";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
+import { Conversation } from "@prisma/client";
+import axios from "axios";
+import useSWR from "swr";
+import { useRouter } from "next/router";
+import { useConversation } from "@/context";
 
 const navigation = [
   { name: "HTTP requests in javascript", href: "#", current: true },
@@ -21,8 +27,31 @@ const navigation = [
   { name: "Reports", href: "#", current: false },
 ];
 
-export default function Layout({ children }: any) {
+const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+
+export function Layout({ children }: any) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { messages, setMessages } = useConversation();
+  const { currentConversationId, setCurrentConversationId } = useConversation();
+
+  const router = useRouter();
+  // const [conversations, setConversations] = useState<Conversation[]>([]);
+  useEffect(() => {
+    if (router.query.id) {
+      setCurrentConversationId(router.query.id as string);
+    } else {
+      setMessages([]);
+    }
+  }, [router.query.id, setCurrentConversationId, setMessages]);
+
+  const {
+    data: conversations,
+    error,
+    isLoading,
+  } = useSWR("/api/conversations", fetcher);
+
+  // if (error) return <div className="text-[#eaeaea]">failed to load</div>;
+  // if (isLoading) return <div className="text-[#eaeaea]">loading...</div>;
 
   return (
     <div className="overflow-hidden w-full h-full relative flex">
@@ -88,27 +117,32 @@ export default function Layout({ children }: any) {
                       <PlusIcon className="h-5 w-5" />
                       New chat
                     </a>
-                    <div className="flex-col flex-1 overflow-y-auto border-b border-white/20">
-                      {navigation.map((item) => (
-                        <div
-                          key={item.name}
-                          className="flex flex-col gap-2 text-[#999] text-sm"
-                        >
-                          <a
-                            href={item.href}
-                            className={clsx(
-                              item.current
-                                ? "bg-[#222] text-white"
-                                : "text-[#999] hover:text-white hover:bg-[#111]",
-                              "group flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all hover:pr-4"
-                            )}
+                    {isLoading ? (
+                      <div className="flex-col flex-1 overflow-y-auto border-b border-white/20"></div>
+                    ) : (
+                      <div className="flex-col flex-1 overflow-y-auto border-b border-white/20">
+                        {conversations.map((item: any) => (
+                          <div
+                            key={item.name}
+                            className="flex flex-col gap-2 text-[#999] text-sm"
                           >
-                            <ChatBubbleLeftIcon className="h-5 w-5" />
-                            {item.name}
-                          </a>
-                        </div>
-                      ))}
-                    </div>
+                            <Link
+                              href={`/chat/${item.id}`}
+                              className={clsx(
+                                item.id === currentConversationId
+                                  ? "bg-[#222] text-white"
+                                  : "text-[#999] hover:text-white hover:bg-[#111]",
+                                "group flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all hover:pr-4"
+                              )}
+                              onClick={() => setCurrentConversationId(item.id)}
+                            >
+                              <ChatBubbleLeftIcon className="h-5 w-5" />
+                              {item.name}
+                            </Link>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <a
                       href="#"
                       className="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-[#111] transition-colors duration-200 text-white cursor-pointer text-sm"
@@ -132,68 +166,78 @@ export default function Layout({ children }: any) {
       </Transition.Root>
 
       {/* Static sidebar for desktop */}
-      <div className="hidden bg-black md:flex md:w-[260px] md:flex-col">
+      <div className="hidden bg-[#111] md:flex md:w-[260px] md:flex-col border-r border-[#333]">
         {/* Sidebar component, swap this element with another sidebar if you like */}
         <div className="flex h-full min-h-0 flex-col">
           <div className="flex h-full w-full flex-1 items-start border-black/20">
             <nav className="flex h-full flex-1 flex-col space-y-1 p-2">
-              <a
-                href="#"
-                className="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-[#111] transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20"
+              <Link
+                href={"/chat"}
+                className="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-[#222] transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20"
+                onClick={() => {
+                  setCurrentConversationId(null);
+                }}
               >
                 <PlusIcon className="h-5 w-5" />
                 New chat
-              </a>
-              <div className="flex-col flex-1 overflow-y-auto border-b border-white/20">
-                {navigation.map((item) => (
-                  <div
-                    key={item.name}
-                    className="flex flex-col gap-2 text-[#999] text-sm"
-                  >
-                    <a
-                      href={item.href}
-                      className={clsx(
-                        item.current
-                          ? "bg-[#222] text-white pr-14"
-                          : "text-[#999] hover:text-white hover:bg-[#111] hover:pr-4",
-                        "group flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all"
-                      )}
+              </Link>
+              {isLoading ? (
+                <div className="flex-col flex-1 overflow-y-auto border-b border-white/20"></div>
+              ) : (
+                <div className="flex-col flex-1 overflow-y-auto border-b border-white/20">
+                  {conversations.map((conversation: any) => (
+                    <div
+                      key={conversation.id}
+                      className="flex flex-col gap-2 text-[#999] text-sm"
                     >
-                      <ChatBubbleLeftIcon className="h-5 w-5" />
-                      <div className="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
-                        {item.name}
-                        <div
-                          className={clsx(
-                            item.current
-                              ? "from-[#222]"
-                              : "group-hover:from-[#111] from-black",
-                            "absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l"
-                          )}
-                        ></div>
-                      </div>
-                      {item.current && (
-                        <div className="absolute flex right-1 z-10 text-[#999] visible">
-                          <button className="p-1 hover:text-white">
-                            <PencilIcon className="h-4 w-4" />
-                          </button>
-                          <button className="p-1 hover:text-white">
-                            <TrashIcon className="h-4 w-4" />
-                          </button>
+                      <Link
+                        href={`/chat/${conversation.id}`}
+                        className={clsx(
+                          conversation.id === currentConversationId
+                            ? "bg-[#333] text-white pr-14"
+                            : "text-[#999] hover:text-white hover:bg-[#222] hover:pr-4",
+                          "group flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all"
+                        )}
+                        onClick={() =>
+                          setCurrentConversationId(conversation.id)
+                        }
+                      >
+                        <ChatBubbleLeftIcon className="h-5 w-5" />
+                        <div className="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
+                          {conversation.name}
+                          <div
+                            className={clsx(
+                              conversation.id === currentConversationId
+                                ? "from-[#333]"
+                                : "group-hover:from-[#222] from-[#111]",
+                              "absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l"
+                            )}
+                          ></div>
                         </div>
-                      )}
-                    </a>
-                  </div>
-                ))}
-              </div>
+                        {conversation.id === currentConversationId && (
+                          <div className="absolute flex right-1 z-10 text-[#999] visible">
+                            <button className="p-1 hover:text-white">
+                              <PencilIcon className="h-4 w-4" />
+                            </button>
+                            <button className="p-1 hover:text-white">
+                              <TrashIcon className="h-4 w-4" />
+                            </button>
+                          </div>
+                        )}
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              )}
               <a
                 href="#"
-                className="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-[#111] transition-colors duration-200 text-white cursor-pointer text-sm"
+                className="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-[#222] transition-colors duration-200 text-white cursor-pointer text-sm"
               >
                 <TrashIcon className="h-5 w-5" />
                 Clear conversations
               </a>
               <button
-                className="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-[#111] transition-colors duration-200 text-white cursor-pointer text-sm"
+                className="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-[#222] transition-colors duration-200 text-white cursor-pointer text-sm"
                 onClick={() => signOut()}
               >
                 <ArrowRightOnRectangleIcon className="h-5 w-5" />
@@ -232,3 +276,5 @@ export default function Layout({ children }: any) {
     </div>
   );
 }
+
+export default memo(Layout);

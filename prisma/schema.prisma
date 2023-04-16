@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Account {
-  id                String  @id @default(cuid())
+  id                String  @id @default(uuid())
   userId            String
   type              String
   provider          String
@@ -30,7 +30,7 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -38,15 +38,15 @@ model Session {
 }
 
 model User {
-  id            String     @id @default(cuid())
+  id            String         @id @default(uuid())
   name          String?
-  email         String?    @unique
+  email         String?        @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  Message       Message[]
-  Response      Response[]
+  messages      Message[]
+  conversations Conversation[]
 }
 
 model VerificationToken {
@@ -58,29 +58,31 @@ model VerificationToken {
 }
 
 model Conversation {
-  id         String     @id @default(cuid())
+  id         String    @id @default(uuid())
   name       String
-  created_at DateTime   @default(now())
+  created_at DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id])
+  userId     String
   messages   Message[]
-  responses  Response[]
 }
 
 model Message {
-  id             String       @id @default(cuid())
+  id             String       @id @default(uuid())
+  role           String
+  content        String
   conversation   Conversation @relation(fields: [conversationId], references: [id])
   conversationId String
   user           User         @relation(fields: [userId], references: [id])
   userId         String
-  message_text   String
   created_at     DateTime     @default(now())
 }
 
-model Response {
-  id             String       @id @default(cuid())
-  conversation   Conversation @relation(fields: [conversationId], references: [id])
-  conversationId String
-  user           User         @relation(fields: [userId], references: [id])
-  userId         String
-  response_text  String
-  created_at     DateTime     @default(now())
-}
+// model Response {
+//   id             String       @id @default(cuid())
+//   conversation   Conversation @relation(fields: [conversationId], references: [id])
+//   conversationId String
+//   user           User         @relation(fields: [userId], references: [id])
+//   userId         String
+//   response_text  String
+//   created_at     DateTime     @default(now())
+// }

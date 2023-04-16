@@ -40,7 +40,7 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
 
   return (
     <div
-      className={`group w-full px-4 pb-4 ${
+      className={`group w-full px-4 pb-3 pt-1 ${
         role != "assistant"
           ? "bg-[#111] clear-both"
           : "bg-[#222] text-white clear-both"

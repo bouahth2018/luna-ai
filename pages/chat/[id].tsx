@@ -4,7 +4,7 @@ import Layout from "@/components/Layout";
 import { GetServerSideProps } from "next";
 import { ChatLayout } from "@/components/ChatLayout";
 
-export default function ChatHome() {
+export default function ChatRoom() {
   return (
     <Layout>
       <ChatLayout />

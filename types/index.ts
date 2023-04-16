@@ -4,3 +4,12 @@ export interface Message {
 }
 
 export type Role = "assistant" | "user";
+
+export type Session = {
+  user: {
+    id?: string;
+    name?: string;
+    email?: string;
+    image?: string;
+  };
+} | null;

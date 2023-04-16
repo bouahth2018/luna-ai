@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { Analytics } from "@vercel/analytics/react";
 import { SessionProvider } from "next-auth/react";
+import { ContextProvider } from "@/context";
 
 export default function App({
   Component,
@@ -9,8 +10,10 @@ export default function App({
 }: AppProps) {
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
-      <Analytics />
+      <ContextProvider>
+        <Component {...pageProps} />
+        <Analytics />
+      </ContextProvider>
     </SessionProvider>
   );
 }

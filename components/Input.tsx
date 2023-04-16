@@ -2,6 +2,9 @@ import { memo, useEffect, useState } from "react";
 import { ChatGPTMessage } from "./ChatLine";
 import { useCookies } from "react-cookie";
 import { Loader2, PlayerStop, Refresh, Send } from "tabler-icons-react";
+import { useSession } from "next-auth/react";
+import { v4 as uuidv4 } from "uuid";
+import { useConversation } from "@/context";
 
 const COOKIE_NAME = "nextjs-example-ai-chat-gpt3";
 
@@ -11,14 +14,23 @@ export function InputMessage({
   setLoading,
   messages,
   currentMessage,
+  setLastMessage,
   setMessages,
   stopGeneratingRef,
   setMessageError,
-}: any) {
+}: // currentConversationId,
+// setCurrentConversationId,
+any) {
   const [input, setInput] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState<Boolean>(false);
   const [cookie, setCookie] = useCookies([COOKIE_NAME]);
   const [height, setHeight] = useState<string>("auto");
+  // const [lastMessage, setLastMessage] = useState<string>("");
+  const { currentConversationId, setCurrentConversationId } = useConversation();
+
+  // const [streamMessages, setStreamMessages] = useState<ChatGPTMessage[]>([])
+
+  const { data: session, status }: any = useSession();
 
   useEffect(() => {
     const textarea = document.getElementById("textarea") as HTMLTextAreaElement;
@@ -73,6 +85,7 @@ export function InputMessage({
         } else if (e.key === "Enter") {
           if (input.trim()) {
             e.preventDefault();
+            // storeUserMessage(input);
             sendMessage(input);
             setInput("");
             setLanding(false);
@@ -94,7 +107,12 @@ export function InputMessage({
   }, [cookie, setCookie]);
 
   // send message to API /api/chat endpoint
-  const sendMessage = async (message: string, deleteCount = 0) => {
+  const sendMessage = async (
+    message: string,
+    deleteCount = 0,
+    conversationId = currentConversationId
+    // lastMessage: any = ""
+  ) => {
     setLoading(true);
     setIsGenerating(true);
     setMessageError(false);
@@ -126,10 +144,70 @@ export function InputMessage({
       }),
     });
 
-    // console.log("Edge function returned.");
+    console.log(cookie[COOKIE_NAME]);
+    console.log(last10messages);
+
+    console.log("Edge function returned.");
+
+    if (conversationId === null) {
+      // Send the user message to the API endpoint
+      const response = await fetch("/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          role: "user",
+          content: message,
+          userId: session?.user.id,
+        }),
+      });
+
+      if (!response.ok) {
+        // Handle any errors that occur while sending the message to the API
+        console.error(
+          "Error sending chat message to API:",
+          response.status,
+          response.statusText
+        );
+      }
+      const newConversation = await response.json();
+      conversationId = newConversation.conversationId;
+      setCurrentConversationId(conversationId);
+      console.log("stored user message and updated id state");
+    } else {
+      // Send the user message to the API endpoint
+      const response = await fetch("/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          role: "user",
+          content: message,
+          userId: session?.user.id,
+          conversationId: conversationId,
+        }),
+      });
+
+      if (!response.ok) {
+        // Handle any errors that occur while sending the message to the API
+        console.error(
+          "Error sending chat message to API:",
+          response.status,
+          response.statusText
+        );
+      }
+      console.log("stored user message");
+    }
 
     if (!response.ok) {
       setMessageError(true);
+      console.error(
+        "Error sending chat message to API:",
+        response.status,
+        response.statusText
+      );
       throw new Error(response.statusText);
     }
 
@@ -166,9 +244,36 @@ export function InputMessage({
         ...newMessages,
         { role: "assistant", content: lastMessage } as ChatGPTMessage,
       ]);
-
+      setLastMessage(lastMessage);
       setLoading(false);
       setIsGenerating(false);
+      console.log(conversationId);
+    }
+
+    // Send the final message to the API endpoint
+    if (done) {
+      const response = await fetch("/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          role: "assistant",
+          content: lastMessage,
+          userId: session?.user.id,
+          conversationId: conversationId,
+        }),
+      });
+      console.log("stored ai message in database");
+
+      if (!response.ok) {
+        // Handle any errors that occur while sending the message to the API
+        console.error(
+          "Error sending chat message to API:",
+          response.status,
+          response.statusText
+        );
+      }
     }
   };
 
@@ -194,7 +299,7 @@ export function InputMessage({
               <button
                 type="button"
                 onClick={handleStopGenerating}
-                className="relative rounded-md bg-transparent px-3 py-2 text-sm text-[#999] shadow-sm ring-1 ring-inset ring-[#555] hover:bg-[#222]"
+                className="relative rounded-md bg-[#111] px-3 py-2 text-sm text-[#999] shadow-sm ring-1 ring-inset ring-[#555] hover:bg-[#222]"
               >
                 <div className="flex w-full items-center justify-center gap-2">
                   <PlayerStop className="w-4 h-4" />
@@ -205,7 +310,7 @@ export function InputMessage({
               <button
                 type="button"
                 onClick={handleRegenerateResponse}
-                className="relative rounded-md bg-transparent px-3 py-2 text-sm text-[#999] shadow-sm ring-1 ring-inset ring-[#555] hover:bg-[#222]"
+                className="relative rounded-md bg-[#111] px-3 py-2 text-sm text-[#999] shadow-sm ring-1 ring-inset ring-[#555] hover:bg-[#222]"
               >
                 <div className="flex w-full items-center justify-center gap-2">
                   <Refresh className="w-4 h-4" />
@@ -239,6 +344,7 @@ export function InputMessage({
               disabled={!input.trim()}
               className="absolute p-1 rounded-md text-[#999] bottom-1.5 md:botttom-2.5 hover:bg-[#555] disabled:hover:bg-transparent right-1 md:right-2 disabled:opacity-40"
               onClick={() => {
+                // storeUserMessage(input);
                 sendMessage(input);
                 setInput("");
                 setLanding(false);
