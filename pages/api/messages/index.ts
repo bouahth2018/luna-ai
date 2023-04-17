@@ -22,7 +22,7 @@ export default async function handler(
       // if no conversation is selected, create a new one
       conversation = await prisma.conversation.create({
         data: {
-          name: "New Conversation",
+          name: "New Chat",
           user: {
             connect: { id: userId },
           },

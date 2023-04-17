@@ -11,3 +11,26 @@
   overflow-y: auto;
   width: 100%;
 }
+
+.typing-indicator {
+  display: absolute;
+  width: 12px;
+  height: 24px;
+  background-color: white;
+  animation: blink 1s infinite;
+}
+
+/* Define the animation for the typing indicator */
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}

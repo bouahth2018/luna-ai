@@ -11,20 +11,14 @@ import { useConversation } from "@/context";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-export function ChatLayout({
-  currentConversationId,
-  setCurrentConversationId,
-}: any) {
-  const [landing, setLanding] = useState<boolean>(true);
+export function ChatLayout() {
   const [loading, setLoading] = useState(false);
   const { messages, setMessages } = useConversation();
   const [currentMessage, setCurrentMessage] = useState<ChatGPTMessage>();
   const [messageError, setMessageError] = useState<boolean>(false);
-  const [lastMessage, setLastMessage] = useState<string>("");
+  const [isGenerating, setIsGenerating] = useState<Boolean>(false);
 
   const stopGeneratingRef = useRef<boolean>(false);
-
-  console.log(currentMessage);
 
   const router = useRouter();
   const { data, error, isLoading } = useSWR(
@@ -41,34 +35,36 @@ export function ChatLayout({
   useEffect(() => {
     if (data && data.messages) {
       setMessages(data.messages);
-      console.log(data.messages);
       setCurrentMessage(data.messages[data.messages.length - 2]);
-      setLanding(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, router.query.id, setMessages]);
+  }, [data]);
 
   if (error) return <Error statusCode={404} />;
 
   return (
     <>
       <div className="flex-1 overflow-hidden">
-        {messages.length === 0 && <Landing />}
-        {!isLoading && <Chat loading={loading} messages={messages} />}
+        {!isLoading && messages.length === 0 && <Landing />}
+        {!isLoading && (
+          <Chat
+            loading={loading}
+            messages={messages}
+            isGenerating={isGenerating}
+          />
+        )}
       </div>
       <div className="absolute bottom-0 left-0 w-full bg-[#111] pt-4 md:!bg-transparent md:bg-gradient-to-t from-[#111] from-75% via-[#111] via-75%">
         <InputMessage
-          setLanding={setLanding}
           loading={loading}
           setLoading={setLoading}
           messages={messages}
           setMessages={setMessages}
-          setLastMessage={setLastMessage}
           currentMessage={currentMessage}
+          isGenerating={isGenerating}
+          setIsGenerating={setIsGenerating}
           stopGeneratingRef={stopGeneratingRef}
           setMessageError={setMessageError}
-          currentConversationId={currentConversationId}
-          setCurrentConversationId={setCurrentConversationId}
         />
         <div className="px-3 pt-2 pb-4 text-center text-xs md:px-4 md:pt-3">
           <p className="text-xs font-light text-white/40">

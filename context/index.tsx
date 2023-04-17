@@ -1,11 +1,16 @@
 import { ChatGPTMessage } from "@/components/ChatLine";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useRef, useState } from "react";
 
 interface ConversationContextType {
   messages: ChatGPTMessage[];
   setMessages: React.Dispatch<React.SetStateAction<ChatGPTMessage[]>>;
   currentConversationId: string | null;
   setCurrentConversationId: (id: string | null) => void;
+  revalidate: boolean;
+  setRevalidate: React.Dispatch<React.SetStateAction<boolean>>;
+  breakChatRef: React.MutableRefObject<boolean>;
+  chatName: string | null;
+  setChatName: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const ConversationContext = createContext<ConversationContextType>({
@@ -13,6 +18,11 @@ const ConversationContext = createContext<ConversationContextType>({
   setMessages: () => {},
   currentConversationId: null,
   setCurrentConversationId: () => {},
+  revalidate: false,
+  setRevalidate: () => {},
+  breakChatRef: { current: false },
+  chatName: null,
+  setChatName: () => {},
 });
 
 export const useConversation = () => useContext(ConversationContext);
@@ -26,6 +36,9 @@ export const ContextProvider = ({ children }: Props) => {
   const [currentConversationId, setCurrentConversationId] = useState<
     string | null
   >(null);
+  const [revalidate, setRevalidate] = useState<boolean>(false);
+  const breakChatRef = useRef<boolean>(false);
+  const [chatName, setChatName] = useState<string | null>(null);
 
   return (
     <ConversationContext.Provider
@@ -34,6 +47,11 @@ export const ContextProvider = ({ children }: Props) => {
         setMessages,
         currentConversationId,
         setCurrentConversationId,
+        revalidate,
+        setRevalidate,
+        breakChatRef,
+        chatName,
+        setChatName,
       }}
     >
       {children}

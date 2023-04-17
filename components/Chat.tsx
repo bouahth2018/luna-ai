@@ -1,5 +1,5 @@
 import { memo, useState } from "react";
-import { LoadingChatLine, MemoizedChatLine } from "./ChatLine";
+import { LoadingChatLine, ChatLine } from "./ChatLine";
 import dynamic from "next/dynamic";
 import { ArrowDown } from "tabler-icons-react";
 
@@ -7,14 +7,19 @@ const ScrollToBottom = dynamic(() => import("react-scroll-to-bottom"), {
   ssr: false,
 });
 
-export function Chat({ landing, loading, messages }: any) {
+export function Chat({ loading, messages, isGenerating }: any) {
   const [showButton, setShowButton] = useState(false);
 
   return (
     <ScrollToBottom className="h-full">
       <div className="flex flex-col items-center">
         {messages.map(({ content, role }: any, index: any) => (
-          <MemoizedChatLine key={index} role={role} content={content} />
+          <ChatLine
+            key={index}
+            role={role}
+            content={content}
+            isGenerating={isGenerating}
+          />
         ))}
         <div className="bg-[#222] w-full">{loading && <LoadingChatLine />}</div>
         <div className="w-full h-24 md:h-40 flex-shrink-0"></div>

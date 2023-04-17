@@ -13,9 +13,15 @@ export interface ChatGPTMessage {
   content: string;
 }
 
+interface Props {
+  role: ChatGPTAgent;
+  content: string;
+  isGenerating: boolean;
+}
+
 // loading placeholder animation for the chat line
 export const LoadingChatLine = () => (
-  <div className="px-4 pb-4 w-full">
+  <div className="px-4 pb-3 pt-1 w-full">
     <div className="text-base gap-4 md:gap-6 md:max-w-2xl lg:max-w-3xl p-4 md:py-6 flex lg:px-0 m-auto">
       <div className="text-right hidden lg:block">
         <p className="font-large text-neutral-500 w-10">Luna</p>
@@ -24,7 +30,8 @@ export const LoadingChatLine = () => (
         <div className="lg:hidden pb-2">
           <p className="font-large text-neutral-500">Luna</p>
         </div>
-        <p className="animate-pulse font-black text-white">...</p>
+        {/* <p className="animate-pulse font-black text-white">...</p> */}
+        <div className="typing-indicator bottom-0 right-0"></div>
       </div>
     </div>
   </div>
@@ -32,7 +39,7 @@ export const LoadingChatLine = () => (
 
 const convertNewLines = (text: string) => text.split("\n").join("  \n");
 
-export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
+export function ChatLine({ role = "assistant", content, isGenerating }: Props) {
   if (!content) {
     return null;
   }
@@ -47,7 +54,6 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
       }`}
       style={{ overflowWrap: "anywhere" }}
     >
-      {/* <div className="mx-auto md:max-w-2xl lg:max-w-3xl px-4 py-8 ring-zinc-100 sm:px-8"> */}
       <div className="text-base gap-4 md:gap-6 md:max-w-2xl lg:max-w-3xl p-4 md:py-6 flex lg:px-0 m-auto">
         <div className="text-right hidden lg:block">
           <p className="font-large text-neutral-500 w-10">
@@ -66,6 +72,7 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
                 {role == "assistant" ? "Luna" : "You"}
               </p>
             </div>
+            {/* {isGenerating && <div className="typing-indicator"></div>} */}
             <MemoizedReactMarkdown
               className="prose prose-invert text-base w-full"
               remarkPlugins={[remarkGfm, remarkMath]}
@@ -118,4 +125,5 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
   );
 }
 
-export const MemoizedChatLine = memo(ChatLine);
+// export const MemoizedChatLine = memo(ChatLine);
+export default memo(ChatLine);

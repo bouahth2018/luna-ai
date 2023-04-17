@@ -9,26 +9,27 @@ import { useConversation } from "@/context";
 const COOKIE_NAME = "nextjs-example-ai-chat-gpt3";
 
 export function InputMessage({
-  setLanding,
   loading,
   setLoading,
   messages,
   currentMessage,
-  setLastMessage,
   setMessages,
+  isGenerating,
+  setIsGenerating,
   stopGeneratingRef,
   setMessageError,
-}: // currentConversationId,
-// setCurrentConversationId,
-any) {
+}: any) {
   const [input, setInput] = useState<string>("");
-  const [isGenerating, setIsGenerating] = useState<Boolean>(false);
+  const [lastMessage, setLastMessage] = useState<string>("");
   const [cookie, setCookie] = useCookies([COOKIE_NAME]);
   const [height, setHeight] = useState<string>("auto");
-  // const [lastMessage, setLastMessage] = useState<string>("");
-  const { currentConversationId, setCurrentConversationId } = useConversation();
-
-  // const [streamMessages, setStreamMessages] = useState<ChatGPTMessage[]>([])
+  const {
+    currentConversationId,
+    setCurrentConversationId,
+    setRevalidate,
+    breakChatRef,
+    setChatName,
+  } = useConversation();
 
   const { data: session, status }: any = useSession();
 
@@ -85,10 +86,8 @@ any) {
         } else if (e.key === "Enter") {
           if (input.trim()) {
             e.preventDefault();
-            // storeUserMessage(input);
             sendMessage(input);
             setInput("");
-            setLanding(false);
             setHeight("auto");
           } else {
             e.preventDefault();
@@ -144,9 +143,6 @@ any) {
       }),
     });
 
-    console.log(cookie[COOKIE_NAME]);
-    console.log(last10messages);
-
     console.log("Edge function returned.");
 
     if (conversationId === null) {
@@ -174,6 +170,7 @@ any) {
       const newConversation = await response.json();
       conversationId = newConversation.conversationId;
       setCurrentConversationId(conversationId);
+      setRevalidate(true);
       console.log("stored user message and updated id state");
     } else {
       // Send the user message to the API endpoint
@@ -234,6 +231,14 @@ any) {
         done = true;
         break;
       }
+      if (breakChatRef.current === true) {
+        controller.abort();
+        done = true;
+        console.error("Stopped API communication");
+        setLoading(false);
+        setIsGenerating(false);
+        break;
+      }
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
       const chunkValue = decoder.decode(value);
@@ -247,7 +252,6 @@ any) {
       setLastMessage(lastMessage);
       setLoading(false);
       setIsGenerating(false);
-      console.log(conversationId);
     }
 
     // Send the final message to the API endpoint
@@ -275,6 +279,74 @@ any) {
         );
       }
     }
+
+    if (done && messages.length === 0) {
+      console.log("running");
+      const newMessage = [
+        {
+          role: "user",
+          content: `Generate a very short title for a conversation based on this message:\n${lastMessage}`,
+        } as ChatGPTMessage,
+      ];
+      const controller = new AbortController();
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        signal: controller.signal,
+        body: JSON.stringify({
+          messages: newMessage,
+          max_tokens: 30,
+          user: cookie[COOKIE_NAME],
+        }),
+      });
+
+      const data = response.body;
+      if (!data) {
+        console.error("No data");
+        return;
+      }
+
+      const reader = data.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+
+      let chatName = "";
+
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        const chunkValue = decoder.decode(value);
+
+        chatName = chatName + chunkValue;
+
+        setChatName(chatName);
+      }
+
+      if (done) {
+        const response = await fetch("/api/conversations/name", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: chatName,
+            conversationId: conversationId,
+          }),
+        });
+        console.log("updated name of conversation");
+
+        if (!response.ok) {
+          // Handle any errors that occur while sending the message to the API
+          console.error(
+            "Error sending chat message to API:",
+            response.status,
+            response.statusText
+          );
+        }
+      }
+    }
   };
 
   function handleStopGenerating() {
@@ -291,7 +363,7 @@ any) {
   }
 
   return (
-    <form className="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
+    <form className="stretch ml-4 mr-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
       <div className="relative flex h-full flex-1 md:flex-col">
         {!loading && messages.length > 0 && (
           <div className="hidden md:flex ml-1 md:w-full md:m-auto md:mb-2 gap-0 md:gap-2 justify-center">
@@ -320,7 +392,7 @@ any) {
             )}
           </div>
         )}
-        <div className="flex flex-col w-full py-2 md:py-2.5 flex-grow md:pl-4 relative rounded-md bg-[#222]">
+        <div className="flex flex-col w-full py-2 md:py-2.5 flex-grow pl-2 md:pl-4 relative rounded-md bg-[#222]">
           <textarea
             aria-label="chat input"
             required
@@ -344,10 +416,8 @@ any) {
               disabled={!input.trim()}
               className="absolute p-1 rounded-md text-[#999] bottom-1.5 md:botttom-2.5 hover:bg-[#555] disabled:hover:bg-transparent right-1 md:right-2 disabled:opacity-40"
               onClick={() => {
-                // storeUserMessage(input);
                 sendMessage(input);
                 setInput("");
-                setLanding(false);
                 setHeight("auto");
               }}
             >
