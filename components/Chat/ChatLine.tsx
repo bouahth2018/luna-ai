@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import { MemoizedReactMarkdown } from "./Markdown/MemoizedReactMarkdown";
-import { CodeBlock } from "./Markdown/CodeBlock";
+import { MemoizedReactMarkdown } from "../Markdown/MemoizedReactMarkdown";
+import { CodeBlock } from "../Markdown/CodeBlock";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -16,7 +16,6 @@ export interface ChatGPTMessage {
 interface Props {
   role: ChatGPTAgent;
   content: string;
-  isGenerating: boolean;
 }
 
 // loading placeholder animation for the chat line
@@ -39,7 +38,7 @@ export const LoadingChatLine = () => (
 
 const convertNewLines = (text: string) => text.split("\n").join("  \n");
 
-export function ChatLine({ role = "assistant", content, isGenerating }: Props) {
+export function ChatLine({ role = "assistant", content }: Props) {
   if (!content) {
     return null;
   }

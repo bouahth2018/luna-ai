@@ -1,13 +1,13 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
-import Layout from "@/components/Layout";
+import Layout from "@/components/Sidebar/Layout";
 import { GetServerSideProps } from "next";
-import { ChatLayout } from "@/components/ChatLayout";
+import { Chat } from "@/components/Chat/Chat";
 
 export default function ChatHome() {
   return (
     <Layout>
-      <ChatLayout />
+      <Chat />
     </Layout>
   );
 }

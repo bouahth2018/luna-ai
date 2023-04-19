@@ -1,11 +1,14 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { NextAuthOptions, User } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 import FacebookProvider from "next-auth/providers/facebook";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
+import { JWT } from "next-auth/jwt";
+import { AdapterUser } from "next-auth/adapters";
+import prisma from "@/lib/prisma";
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -21,7 +24,22 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async session({ session, user }: any) {
+    async jwt({ token, user }: any) {
+      if (user) {
+        const session = await prisma.session.findFirst({
+          where: { userId: user.id },
+          select: { sessionToken: true },
+        });
+
+        console.log("session: ", session);
+        if (session) {
+          token.sessionToken = session.sessionToken;
+        }
+      }
+      console.log("token: ", token);
+      return token;
+    },
+    async session({ session, token, user }: any) {
       session.user.id = user.id;
       return session;
     },

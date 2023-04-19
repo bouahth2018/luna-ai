@@ -4,6 +4,7 @@ import {
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   ChatBubbleLeftIcon,
+  CheckIcon,
   PencilIcon,
   PlusIcon,
   TrashIcon,
@@ -21,31 +22,42 @@ import { Refresh } from "tabler-icons-react";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 export function Layout({ children }: any) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { messages, setMessages } = useConversation();
   const {
+    messages,
+    setMessages,
     currentConversationId,
     setCurrentConversationId,
     revalidate,
+    setRevalidate,
     breakChatRef,
+    chatName,
   } = useConversation();
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [renameValue, setrenameValue] = useState("");
 
   const {
     data: conversations,
     error,
     isLoading,
     mutate,
-  } = useSWR("/api/conversations", fetcher, { refreshInterval: 1000 });
+  } = useSWR("/api/conversations", fetcher);
 
   const handleRefresh = useCallback(() => {
     mutate();
+    // console.log("Revalidated using mutate()");
   }, [mutate]);
 
   useEffect(() => {
     if (revalidate) {
-      handleRefresh;
+      handleRefresh();
+      setTimeout(() => {
+        setRevalidate(false);
+      }, 100);
     }
-  }, [handleRefresh, revalidate]);
+  }, [handleRefresh, revalidate, setRevalidate]);
 
   const router = useRouter();
 
@@ -57,9 +69,7 @@ export function Layout({ children }: any) {
     }
   }, [router.query.id, setCurrentConversationId, setMessages]);
 
-  async function handleDelete(e: React.MouseEvent<HTMLButtonElement>) {
-    e.stopPropagation();
-    e.preventDefault();
+  async function handleDelete() {
     const response = await fetch(
       `/api/conversations/delete/${currentConversationId}`,
       { method: "DELETE" }
@@ -69,11 +79,67 @@ export function Layout({ children }: any) {
       router.push("/chat");
       setCurrentConversationId(null);
       setMessages([]);
+      handleRefresh();
       console.log("conversation deleted");
     } else {
       console.error("An error occurred while deleting the conversation.");
     }
   }
+
+  async function handleClearConversations() {
+    const response = await fetch(`/api/conversations/delete`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      router.push("/chat");
+      setCurrentConversationId(null);
+      setMessages([]);
+      handleRefresh();
+      console.log("Cleared all conversations");
+    } else {
+      console.error("An error occurred while clearing conversations.");
+    }
+  }
+
+  function handleConfirm(e: React.MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (isDeleting) {
+      handleDelete();
+    } else if (isRenaming) {
+      // handleRename(conversation);
+      //handle renaming here
+    }
+    setIsDeleting(false);
+    setIsRenaming(false);
+  }
+
+  function handleCancel(e: React.MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsDeleting(false);
+    setIsRenaming(false);
+  }
+
+  function handleOpenRenameModal(e: React.MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
+    e.preventDefault();
+    // Rename conversation here
+  }
+
+  function handleOpenDeleteModal(e: React.MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsDeleting(true);
+  }
+
+  useEffect(() => {
+    if (isRenaming) {
+      setIsDeleting(false);
+    } else if (isDeleting) {
+      setIsRenaming(false);
+    }
+  }, [isRenaming, isDeleting]);
 
   return (
     <div className="overflow-hidden w-full h-full relative flex">
@@ -206,12 +272,34 @@ export function Layout({ children }: any) {
               </Link>
               {error && (
                 <div className="flex-col flex-1 overflow-y-auto border-b border-white/20">
-                  <div className="text-[#eaeaea]">failed to load</div>
+                  <div className="flex flex-col gap-2 pb-2 text-[#999] text-sm h-full justify-center items-center">
+                    <div className="p-3 text-center italic text-[#999]">
+                      Unable to load history
+                      <div className="mt-1">
+                        <button
+                          type="button"
+                          className="relative m-auto mt-2 rounded-md px-3 py-2 ring-1 ring-inset ring-white/20 hover:bg-[#222]"
+                          onClick={() => {
+                            handleRefresh();
+                          }}
+                        >
+                          <div className="flex w-full items-center justify-center gap-2">
+                            Retry
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
-              {isLoading && !error ? (
-                <div className="flex-col flex-1 overflow-y-auto border-b border-white/20"></div>
-              ) : (
+              {isLoading && (
+                <div className="flex-col flex-1 overflow-y-auto border-b border-white/20">
+                  <div className="flex flex-col gap-2 pb-2 text-[#999] text-sm h-full justify-center items-center">
+                    {/* Insert loading spinner here */}
+                  </div>
+                </div>
+              )}
+              {!isLoading && !error && (
                 <div className="flex-col flex-1 overflow-y-auto border-b border-white/20">
                   {conversations.map((conversation: any) => (
                     <div
@@ -220,6 +308,7 @@ export function Layout({ children }: any) {
                     >
                       <Link
                         href={`/chat/${conversation.id}`}
+                        passHref
                         className={clsx(
                           conversation.id === currentConversationId
                             ? "bg-[#333] text-white pr-14"
@@ -234,31 +323,71 @@ export function Layout({ children }: any) {
                           }, 100);
                         }}
                       >
-                        <ChatBubbleLeftIcon className="h-5 w-5" />
-                        <div className="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
-                          {conversation.name}
-                          <div
-                            className={clsx(
-                              conversation.id === currentConversationId
-                                ? "from-[#333]"
-                                : "group-hover:from-[#222] from-[#111]",
-                              "absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l"
-                            )}
-                          ></div>
-                        </div>
-                        {conversation.id === currentConversationId && (
-                          <div className="absolute flex right-1 z-10 text-[#999] visible">
-                            <button className="p-1 hover:text-white">
-                              <PencilIcon className="h-4 w-4" />
-                            </button>
-                            <button
-                              className="p-1 hover:text-white"
-                              onClick={handleDelete}
-                            >
-                              <TrashIcon className="h-4 w-4" />
-                            </button>
-                          </div>
+                        {isDeleting &&
+                        conversation.id === currentConversationId ? (
+                          <>
+                            <TrashIcon className="h-5 w-5" />
+                            <div className="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
+                              Delete &quot;{conversation.name}&quot;?
+                              <div
+                                className={clsx(
+                                  conversation.id === currentConversationId
+                                    ? "from-[#333]"
+                                    : "group-hover:from-[#222] from-[#111]",
+                                  "absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l"
+                                )}
+                              ></div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <ChatBubbleLeftIcon className="h-5 w-5" />
+                            <div className="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
+                              {conversation.name}
+                              <div
+                                className={clsx(
+                                  conversation.id === currentConversationId
+                                    ? "from-[#333]"
+                                    : "group-hover:from-[#222] from-[#111]",
+                                  "absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l"
+                                )}
+                              ></div>
+                            </div>
+                          </>
                         )}
+
+                        {(isDeleting || isRenaming) &&
+                          conversation.id === currentConversationId && (
+                            <div className="absolute flex right-1 z-10 text-[#999] visible">
+                              <button
+                                className="p-1 hover:text-white"
+                                onClick={handleConfirm}
+                              >
+                                <CheckIcon className="h-4 w-4" />
+                              </button>
+                              <button
+                                className="p-1 hover:text-white"
+                                onClick={handleCancel}
+                              >
+                                <XMarkIcon className="h-4 w-4" />
+                              </button>
+                            </div>
+                          )}
+                        {conversation.id === currentConversationId &&
+                          !isDeleting &&
+                          !isRenaming && (
+                            <div className="absolute flex right-1 z-10 text-[#999] visible">
+                              <button className="p-1 hover:text-white">
+                                <PencilIcon className="h-4 w-4" />
+                              </button>
+                              <button
+                                className="p-1 hover:text-white"
+                                onClick={handleOpenDeleteModal}
+                              >
+                                <TrashIcon className="h-4 w-4" />
+                              </button>
+                            </div>
+                          )}
                       </Link>
                     </div>
                   ))}
@@ -271,13 +400,14 @@ export function Layout({ children }: any) {
                 <Refresh className="h-5 w-5" />
                 Refresh
               </button>
-              <a
-                href="#"
+              <button
+                type="button"
                 className="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-[#222] transition-colors duration-200 text-white cursor-pointer text-sm"
+                onClick={handleClearConversations}
               >
                 <TrashIcon className="h-5 w-5" />
                 Clear conversations
-              </a>
+              </button>
               <button
                 className="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-[#222] transition-colors duration-200 text-white cursor-pointer text-sm"
                 onClick={() => signOut()}

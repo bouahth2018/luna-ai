@@ -25,15 +25,18 @@ export function Landing() {
           </p>
         </div>
         <div className="mt-8 flex justify-center text-center">
-          <div className="relative rounded-full py-1 px-3 text-sm leading-6 text-[#eaeaea] ring-1 ring-white/20 hover:ring-white/50">
+          <div className="relative rounded-full py-1 px-3 text-sm leading-6 text-[#eaeaea]">
             We rely on your support to keep this service running.{" "}
-            <a
-              className="font-bold text-cyan-500 cursor-pointer"
-              onClick={handleOpenModal}
-            >
-              <span className="absolute inset-0" aria-hidden="true" />
-              Donate <span aria-hidden="true">&rarr;</span>
-            </a>
+            <div className="mt-4">
+              <button
+                type="button"
+                className="font-bold text-lg text-cyan-400 cursor-pointer rounded-full py-2 px-6 ring-1 ring-white/20 hover:ring-white/40 hover:bg-[#222]"
+                onClick={handleOpenModal}
+              >
+                <span className="absolute inset-0" aria-hidden="true" />
+                Donate <span aria-hidden="true">&rarr;</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -3,7 +3,6 @@ import { ChatGPTMessage } from "./ChatLine";
 import { useCookies } from "react-cookie";
 import { Loader2, PlayerStop, Refresh, Send } from "tabler-icons-react";
 import { useSession } from "next-auth/react";
-import { v4 as uuidv4 } from "uuid";
 import { useConversation } from "@/context";
 
 const COOKIE_NAME = "nextjs-example-ai-chat-gpt3";
@@ -105,7 +104,7 @@ export function InputMessage({
     }
   }, [cookie, setCookie]);
 
-  // send message to API /api/chat endpoint
+  // send message to API /api/chat endpoint ----------
   const sendMessage = async (
     message: string,
     deleteCount = 0,
@@ -116,6 +115,8 @@ export function InputMessage({
     setIsGenerating(true);
     setMessageError(false);
 
+    // IF REGENERATE RESPONSE ----------
+
     if (deleteCount) {
       const updatedMessages = messages;
       for (let i = 0; i < deleteCount; i++) {
@@ -123,12 +124,30 @@ export function InputMessage({
       }
     }
 
+    // SEND USER MESSAGE TO CHATGPT API ----------
+
     const newMessages = [
       ...messages,
       { role: "user", content: message } as ChatGPTMessage,
     ];
     setMessages(newMessages);
     const last10messages = newMessages.slice(-10); // remember last 10 messages
+
+    // To prevent the current user message from disappearing
+    // when the regenerate response function is called, the last
+    // two messages will be deleted here.
+
+    if (deleteCount) {
+      // Delete last two messages from the database
+      const response = await fetch(`/api/messages/regenerate`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        console.log("Deleted last two messages");
+      } else {
+        console.error("An error occurred while deleting messages");
+      }
+    }
 
     const controller = new AbortController();
     const response = await fetch("/api/chat", {
@@ -142,8 +161,19 @@ export function InputMessage({
         user: cookie[COOKIE_NAME],
       }),
     });
+    if (!response.ok) {
+      setMessageError(true);
+      console.error(
+        "Error sending chat message to API:",
+        response.status,
+        response.statusText
+      );
+      throw new Error(response.statusText);
+    }
 
     console.log("Edge function returned.");
+
+    // STORE USER MESSAGE IN DATABASE ----------
 
     if (conversationId === null) {
       // Send the user message to the API endpoint
@@ -158,7 +188,6 @@ export function InputMessage({
           userId: session?.user.id,
         }),
       });
-
       if (!response.ok) {
         // Handle any errors that occur while sending the message to the API
         console.error(
@@ -171,9 +200,9 @@ export function InputMessage({
       conversationId = newConversation.conversationId;
       setCurrentConversationId(conversationId);
       setRevalidate(true);
+
       console.log("stored user message and updated id state");
     } else {
-      // Send the user message to the API endpoint
       const response = await fetch("/api/messages", {
         method: "POST",
         headers: {
@@ -195,18 +224,10 @@ export function InputMessage({
           response.statusText
         );
       }
-      console.log("stored user message");
+      console.log("stored user message in database");
     }
 
-    if (!response.ok) {
-      setMessageError(true);
-      console.error(
-        "Error sending chat message to API:",
-        response.status,
-        response.statusText
-      );
-      throw new Error(response.statusText);
-    }
+    // STREAM MESSAGE BACK FROM CHATGPT API ----------
 
     // This data is a ReadableStream
     const data = response.body;
@@ -249,10 +270,12 @@ export function InputMessage({
         ...newMessages,
         { role: "assistant", content: lastMessage } as ChatGPTMessage,
       ]);
-      setLastMessage(lastMessage);
+      // setLastMessage(lastMessage);
       setLoading(false);
       setIsGenerating(false);
     }
+
+    // STORE AI MESSAGE IN DATABASE ----------
 
     // Send the final message to the API endpoint
     if (done) {
@@ -268,6 +291,7 @@ export function InputMessage({
           conversationId: conversationId,
         }),
       });
+
       console.log("stored ai message in database");
 
       if (!response.ok) {
@@ -280,21 +304,22 @@ export function InputMessage({
       }
     }
 
+    // UPDATE CONVERSATION NAME ----------
+
     if (done && messages.length === 0) {
       console.log("running");
       const newMessage = [
         {
           role: "user",
-          content: `Generate a very short title for a conversation based on this message:\n${lastMessage}`,
+          content: `Write around a 3-word title for a conversation based 
+            on this message:\n"${lastMessage}"\nRespond without quotation marks.`,
         } as ChatGPTMessage,
       ];
-      const controller = new AbortController();
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        signal: controller.signal,
         body: JSON.stringify({
           messages: newMessage,
           max_tokens: 30,
@@ -307,6 +332,9 @@ export function InputMessage({
         console.error("No data");
         return;
       }
+      if (!response.ok) {
+        console.error("error handling title");
+      }
 
       const reader = data.getReader();
       const decoder = new TextDecoder();
@@ -315,6 +343,10 @@ export function InputMessage({
       let chatName = "";
 
       while (!done) {
+        if (breakChatRef.current === true) {
+          console.log("Stopped sending title to api");
+          break;
+        }
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         const chunkValue = decoder.decode(value);
@@ -324,6 +356,7 @@ export function InputMessage({
         setChatName(chatName);
       }
 
+      // Update conversation name in the database
       if (done) {
         const response = await fetch("/api/conversations/name", {
           method: "PUT",
@@ -335,6 +368,9 @@ export function InputMessage({
             conversationId: conversationId,
           }),
         });
+
+        setRevalidate(true);
+        console.log(chatName);
         console.log("updated name of conversation");
 
         if (!response.ok) {

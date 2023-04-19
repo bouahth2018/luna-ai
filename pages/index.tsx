@@ -1,7 +1,7 @@
-import { Chat } from "@/components/Chat";
-import { ChatGPTMessage } from "@/components/ChatLine";
+import { Chat } from "@/components/Chat/Chat";
+import { ChatGPTMessage } from "@/components/Chat/ChatLine";
 import ClearMessagesModal from "@/components/ClearMessagesModal";
-import { InputMessage } from "@/components/Input";
+import { InputMessage } from "@/components/Chat/Input";
 import { getServerSession } from "next-auth";
 import { signOut } from "next-auth/react";
 import Head from "next/head";
