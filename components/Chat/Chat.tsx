@@ -8,7 +8,7 @@ import useSWR from "swr";
 import Error from "next/error";
 import { useConversation } from "@/context";
 import dynamic from "next/dynamic";
-import { ArrowDown } from "tabler-icons-react";
+import { ArrowDown, Loader } from "tabler-icons-react";
 
 const ScrollToBottom = dynamic(() => import("react-scroll-to-bottom"), {
   ssr: false,
@@ -50,6 +50,11 @@ export function Chat() {
   return (
     <>
       <div className="flex-1 overflow-hidden">
+        {isLoading && (
+          <div className="flex mt-8 items-center justify-center">
+            <Loader className="text-white h-5 w-5 animate-spin" />
+          </div>
+        )}
         {!isLoading && messages.length === 0 && <Landing />}
         {!isLoading && (
           <ScrollToBottom className="h-full">
