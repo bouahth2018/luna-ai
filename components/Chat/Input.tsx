@@ -19,7 +19,6 @@ export function InputMessage({
   setMessageError,
 }: any) {
   const [input, setInput] = useState<string>("");
-  const [lastMessage, setLastMessage] = useState<string>("");
   const [cookie, setCookie] = useCookies([COOKIE_NAME]);
   const [height, setHeight] = useState<string>("auto");
   const {
@@ -30,7 +29,7 @@ export function InputMessage({
     setChatName,
   } = useConversation();
 
-  const { data: session, status }: any = useSession();
+  const { data: session }: any = useSession();
 
   useEffect(() => {
     const textarea = document.getElementById("textarea") as HTMLTextAreaElement;
@@ -311,7 +310,7 @@ export function InputMessage({
       const newMessage = [
         {
           role: "user",
-          content: `Write around a 3-word title for a conversation based 
+          content: `Write a 3-4 word title for a conversation based 
             on this message:\n"${lastMessage}"\nRespond without quotation marks.`,
         } as ChatGPTMessage,
       ];
@@ -389,7 +388,7 @@ export function InputMessage({
     stopGeneratingRef.current = true;
     setTimeout(() => {
       stopGeneratingRef.current = false;
-    }, 1000);
+    }, 100);
   }
 
   function handleRegenerateResponse() {
@@ -399,7 +398,7 @@ export function InputMessage({
   }
 
   return (
-    <form className="stretch ml-4 mr-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
+    <form className="stretch mx-4 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
       <div className="relative flex h-full flex-1 md:flex-col">
         {!loading && messages.length > 0 && (
           <div className="hidden md:flex ml-1 md:w-full md:m-auto md:mb-2 gap-0 md:gap-2 justify-center">
@@ -428,7 +427,7 @@ export function InputMessage({
             )}
           </div>
         )}
-        <div className="flex flex-col w-full py-2 md:py-2.5 flex-grow pl-2 md:pl-4 relative rounded-md bg-[#222]">
+        <div className="flex flex-col w-full py-2 md:py-2.5 flex-grow pl-1 md:pl-4 relative rounded-md bg-[#222]">
           <textarea
             aria-label="chat input"
             required

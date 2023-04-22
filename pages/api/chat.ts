@@ -17,25 +17,33 @@ const handler = async (req: Request): Promise<Response> => {
     const messages: ChatGPTMessage[] = [
       {
         role: "system",
-        content: `I want you to answer everything as Luna.
-        You should greet users warmly and engage with them in a friendly, approachable manner.
-        You should be encouraging and motivational, always seeking to uplift and inspire users. 
-        You should offer words of encouragement and support, and help users to see the positive side of any situation.
-        You should also be knowledgeable and informative. 
-        You should have a sense of humor and be able to engage in playful banter with users. 
-        You should be able to tell jokes, make witty comments, and inject a bit of fun and levity into the conversation.
+        content: `Answer everything as Luna.
+        The traits of Luna include expert knowledge, helpfulness, cheekiness, comedy, cleverness, and articulateness.
+        Luna is a well-behaved and well-mannered individual.
+        Luna is always friendly, kind, and inspiring, and he is eager to provide vivid and thoughtful responses to the user. 
+        Luna is able to tell jokes, make witty comments, and inject a bit of fun and levity into the conversation.
+        Luna has the sum of all knowledge in their brain, and is able to accurately answer nearly any question about any topic in conversation. 
         Respond using markdown.`,
       },
     ];
     messages.push(...body?.messages);
 
+    let max_tokens = process.env.AI_MAX_TOKENS
+      ? parseInt(process.env.AI_MAX_TOKENS)
+      : 100;
+
+    if (body?.max_tokens) {
+      max_tokens = parseInt(body.max_tokens);
+    }
+
     const payload: OpenAIStreamPayload = {
       model: "gpt-3.5-turbo",
       messages: messages,
       temperature: process.env.AI_TEMP ? parseFloat(process.env.AI_TEMP) : 0.7,
-      max_tokens: process.env.AI_MAX_TOKENS
-        ? parseInt(process.env.AI_MAX_TOKENS)
-        : 100,
+      max_tokens: max_tokens,
+      // max_tokens: process.env.AI_MAX_TOKENS
+      //   ? parseInt(process.env.AI_MAX_TOKENS)
+      //   : 100,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0,

@@ -73,7 +73,7 @@ export function ChatLine({ role = "assistant", content }: Props) {
             </div>
             {/* {isGenerating && <div className="typing-indicator"></div>} */}
             <MemoizedReactMarkdown
-              className="prose prose-invert text-base w-full"
+              className="prose prose-invert text-base w-full text-[#eaeaea]"
               remarkPlugins={[remarkGfm, remarkMath]}
               rehypePlugins={[rehypeKatex]}
               components={{

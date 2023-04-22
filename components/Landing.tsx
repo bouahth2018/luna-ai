@@ -30,11 +30,12 @@ export function Landing() {
             <div className="mt-4">
               <button
                 type="button"
-                className="font-bold text-lg text-cyan-400 cursor-pointer rounded-full py-2 px-6 ring-1 ring-white/20 hover:ring-white/40 hover:bg-[#222]"
+                // className="font-bold text-base text-cyan-400 cursor-pointer rounded-full py-1 px-4 ring-1 ring-white/20 hover:ring-white/40 hover:bg-[#222]"
+                className="font-bold text-base text-black bg-white cursor-pointer rounded-full py-2 px-4 hover:bg-[#999]"
                 onClick={handleOpenModal}
               >
-                <span className="absolute inset-0" aria-hidden="true" />
-                Donate <span aria-hidden="true">&rarr;</span>
+                {/* <span className="absolute inset-0" aria-hidden="true" /> */}
+                Support Us <span aria-hidden="true">&rarr;</span>
               </button>
             </div>
           </div>

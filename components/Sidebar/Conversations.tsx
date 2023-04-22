@@ -8,19 +8,75 @@ import {
 } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { memo, useEffect, useState } from "react";
 
 export function Conversations({
   conversations,
   currentConversationId,
   setCurrentConversationId,
-  handleDelete,
+  handleRefresh,
 }: any) {
-  const { breakChatRef } = useConversation();
+  const { breakChatRef, setMessages } = useConversation();
 
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
-  const [renameValue, setrenameValue] = useState("");
+  const [renameValue, setRenameValue] = useState("");
+
+  const router = useRouter();
+
+  const handleEnterDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleRename();
+    }
+  };
+
+  async function handleDelete() {
+    const response = await fetch(
+      `/api/conversations/delete/${currentConversationId}`,
+      { method: "DELETE" }
+    );
+
+    if (response.ok) {
+      breakChatRef.current = true;
+      setTimeout(() => {
+        breakChatRef.current = false;
+      }, 100);
+      router.push("/chat");
+      setCurrentConversationId(null);
+      setMessages([]);
+      handleRefresh();
+      console.log("Conversation deleted.");
+    } else {
+      console.error("An error occurred while deleting the conversation.");
+    }
+  }
+
+  async function handleRename() {
+    if (renameValue.trim().length > 0) {
+      const response = await fetch("/api/conversations/name", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: renameValue,
+          conversationId: currentConversationId,
+        }),
+      });
+
+      if (response.ok) {
+        handleRefresh();
+        console.log("Conversation renamed to: ", renameValue);
+      } else if (!response.ok) {
+        console.error("An error ocuured while renaming conversation.");
+      }
+
+      setRenameValue("");
+      setIsRenaming(false);
+    }
+  }
 
   function handleConfirm(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
@@ -28,8 +84,7 @@ export function Conversations({
     if (isDeleting) {
       handleDelete();
     } else if (isRenaming) {
-      // handleRename(conversation);
-      // handle renaming here
+      handleRename();
     }
     setIsDeleting(false);
     setIsRenaming(false);
@@ -45,7 +100,7 @@ export function Conversations({
   function handleOpenRenameModal(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
     e.preventDefault();
-    // Rename conversation here
+    setIsRenaming(true);
   }
 
   function handleOpenDeleteModal(e: React.MouseEvent<HTMLButtonElement>) {
@@ -86,20 +141,41 @@ export function Conversations({
               }, 100);
             }}
           >
-            {isDeleting && conversation.id === currentConversationId ? (
+            {(isDeleting || isRenaming) &&
+            conversation.id === currentConversationId ? (
               <>
-                <TrashIcon className="h-5 w-5" />
-                <div className="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
-                  Delete &quot;{conversation.name}&quot;?
-                  <div
-                    className={clsx(
-                      conversation.id === currentConversationId
-                        ? "from-[#333]"
-                        : "group-hover:from-[#222] from-[#111]",
-                      "absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l"
-                    )}
-                  ></div>
-                </div>
+                {isDeleting && (
+                  <>
+                    <TrashIcon className="h-5 w-5" />
+                    <div className="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
+                      Delete &quot;{conversation.name}&quot;?
+                      <div
+                        className={clsx(
+                          conversation.id === currentConversationId
+                            ? "from-[#333]"
+                            : "group-hover:from-[#222] from-[#111]",
+                          "absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l"
+                        )}
+                      />
+                    </div>
+                  </>
+                )}
+                {isRenaming && (
+                  <>
+                    <ChatBubbleLeftIcon className="h-5 w-5" />
+                    <div className="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
+                      <input
+                        className="flex-1 w-full max-h-5 overflow-hidden overflow-ellipsis bg-transparent text-left text-sm leading-5 text-white outline-none focus:border focus:border-indigo-500"
+                        type="text"
+                        value={renameValue}
+                        onChange={(e) => setRenameValue(e.target.value)}
+                        onKeyDown={handleEnterDown}
+                        autoFocus
+                      />
+                      <div className="absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l"></div>
+                    </div>
+                  </>
+                )}
               </>
             ) : (
               <>
@@ -141,7 +217,11 @@ export function Conversations({
               !isDeleting &&
               !isRenaming && (
                 <div className="absolute flex right-1 z-10 text-[#999] visible">
-                  <button type="button" className="p-1 hover:text-white">
+                  <button
+                    type="button"
+                    className="p-1 hover:text-white"
+                    onClick={handleOpenRenameModal}
+                  >
                     <PencilIcon className="h-4 w-4" />
                   </button>
                   <button
