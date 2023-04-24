@@ -6,7 +6,7 @@ import { authOptions } from "../auth/[...nextauth]";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
-): Promise<void> {
+) {
   const session: Session = await getServerSession(req, res, authOptions);
 
   if (!session) {
