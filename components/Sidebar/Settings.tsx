@@ -36,7 +36,7 @@ export const Settings: FC<Props> = ({ handleRefresh, conversations }) => {
       setCurrentConversationId(null);
       setMessages([]);
       handleRefresh();
-      console.log("Cleared all conversations");
+      // console.log("Cleared all conversations");
     } else {
       console.error("An error occurred while clearing conversations.");
     }

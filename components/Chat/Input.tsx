@@ -142,7 +142,7 @@ export function InputMessage({
         method: "DELETE",
       });
       if (response.ok) {
-        console.log("Deleted last two messages");
+        // console.log("Deleted last two messages");
       } else {
         console.error("An error occurred while deleting messages");
       }
@@ -170,7 +170,7 @@ export function InputMessage({
       throw new Error(response.statusText);
     }
 
-    console.log("Edge function returned.");
+    // console.log("Edge function returned.");
 
     // STORE USER MESSAGE IN DATABASE ----------
 
@@ -200,7 +200,7 @@ export function InputMessage({
       setCurrentConversationId(conversationId);
       setRevalidate(true);
 
-      console.log("stored user message and updated id state");
+      // console.log("stored user message and updated id state");
     } else {
       const response = await fetch("/api/messages", {
         method: "POST",
@@ -223,7 +223,7 @@ export function InputMessage({
           response.statusText
         );
       }
-      console.log("stored user message in database");
+      // console.log("stored user message in database");
     }
 
     // STREAM MESSAGE BACK FROM CHATGPT API ----------
@@ -291,7 +291,7 @@ export function InputMessage({
         }),
       });
 
-      console.log("stored ai message in database");
+      // console.log("stored ai message in database");
 
       if (!response.ok) {
         // Handle any errors that occur while sending the message to the API
@@ -306,7 +306,7 @@ export function InputMessage({
     // UPDATE CONVERSATION NAME ----------
 
     if (done && messages.length === 0) {
-      console.log("running");
+      // console.log("running");
       const newMessage = [
         {
           role: "user",
@@ -343,7 +343,7 @@ export function InputMessage({
 
       while (!done) {
         if (breakChatRef.current === true) {
-          console.log("Stopped sending title to api");
+          // console.log("Stopped sending title to api");
           break;
         }
         const { value, done: doneReading } = await reader.read();
@@ -369,8 +369,8 @@ export function InputMessage({
         });
 
         setRevalidate(true);
-        console.log(chatName);
-        console.log("updated name of conversation");
+        // console.log(chatName);
+        // console.log("updated name of conversation");
 
         if (!response.ok) {
           // Handle any errors that occur while sending the message to the API
