@@ -22,7 +22,8 @@ export default function SignIn({
       }
     }
     checkSession();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
