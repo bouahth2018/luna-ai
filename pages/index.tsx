@@ -1,6 +1,4 @@
-import { getServerSession } from "next-auth";
 import Head from "next/head";
-import { authOptions } from "./api/auth/[...nextauth]";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getSession } from "next-auth/react";
@@ -42,8 +40,10 @@ export default function Home() {
         </Head>
         <div className="flex flex-col justify-center min-h-full">
           <div className="flex justify-center items-center w-full flex-1 self-center p-6 flex-col relative">
-            {/* <span className="text-white">Please stand by...</span> */}
             <Loader className="h-8 w-8 text-white animate-spin" />
+            <span className="text-[#777] mt-6">
+              Please stand by, while we are checking your browser...
+            </span>
           </div>
         </div>
       </>
@@ -52,26 +52,3 @@ export default function Home() {
 
   return;
 }
-
-// export async function getServerSideProps(context: any) {
-//   const session = await getServerSession(context.req, context.res, authOptions);
-
-//   if (!session) {
-//     return {
-//       redirect: {
-//         destination: "/auth/signin",
-//         permanent: false,
-//       },
-//     };
-//   }
-
-//   return {
-//     props: {
-//       session,
-//     },
-//     redirect: {
-//       destination: "/chat",
-//       permanent: false,
-//     },
-//   };
-// }
