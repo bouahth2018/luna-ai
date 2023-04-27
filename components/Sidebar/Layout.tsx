@@ -44,7 +44,8 @@ export function Layout({ children }: any) {
         setRevalidate(false);
       }, 100);
     }
-  }, [handleRefresh, revalidate, setRevalidate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revalidate]);
 
   const router = useRouter();
 
@@ -54,7 +55,8 @@ export function Layout({ children }: any) {
     } else {
       setMessages([]);
     }
-  }, [router.query.id, setCurrentConversationId, setMessages]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query.id]);
 
   const conversation = conversations?.find(
     (obj: { id: string | string[] | undefined }) => obj.id === router.query.id

@@ -101,7 +101,8 @@ export function InputMessage({
       const randomId = Math.random().toString(36).substring(7);
       setCookie(COOKIE_NAME, randomId);
     }
-  }, [cookie, setCookie]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cookie]);
 
   // send message to API /api/chat endpoint ----------
   const sendMessage = async (

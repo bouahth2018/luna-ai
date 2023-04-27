@@ -43,7 +43,8 @@ export function Chat() {
       setMessages(data.messages);
       setCurrentMessage(data.messages[data.messages.length - 2]);
     }
-  }, [data, setMessages]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   if (error) return <Error statusCode={404} />;
 
