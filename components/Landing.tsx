@@ -17,7 +17,7 @@ export function Landing() {
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
               Luna AI
             </span>
-            . Powered by ChatGPT
+            . Powered by OpenAI
           </h1>
           <p className="mt-6 text-md sm:text-base text-[#eaeaea]">
             A friendly and knowledgeable AI designed to assist and interact with
