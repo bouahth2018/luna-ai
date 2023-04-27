@@ -21,7 +21,7 @@ interface Props {
 // loading placeholder animation for the chat line
 export const LoadingChatLine = () => (
   <div className="px-4 pb-3 pt-1 w-full">
-    <div className="text-base gap-4 md:gap-6 md:max-w-2xl lg:max-w-3xl p-4 md:py-6 flex lg:px-0 m-auto">
+    <div className="gap-4 md:gap-6 md:max-w-2xl lg:max-w-3xl p-4 md:py-6 flex lg:px-0 m-auto">
       <div className="text-right hidden lg:block">
         <p className="font-large text-neutral-500 w-10">Luna</p>
       </div>
@@ -47,13 +47,11 @@ export function ChatLine({ role = "assistant", content }: Props) {
   return (
     <div
       className={`group w-full px-4 pb-3 pt-1 ${
-        role != "assistant"
-          ? "bg-[#111] clear-both"
-          : "bg-[#222] text-white clear-both"
+        role != "assistant" ? "bg-[#111]" : "bg-[#222]"
       }`}
       style={{ overflowWrap: "anywhere" }}
     >
-      <div className="text-base gap-4 md:gap-6 md:max-w-2xl lg:max-w-3xl p-4 md:py-6 flex lg:px-0 m-auto">
+      <div className="gap-4 md:gap-6 md:max-w-2xl lg:max-w-3xl p-4 md:py-6 flex lg:px-0 m-auto">
         <div className="text-right hidden lg:block">
           <p className="font-large text-neutral-500 w-10">
             {role == "assistant" ? "Luna" : "You"}
@@ -73,7 +71,7 @@ export function ChatLine({ role = "assistant", content }: Props) {
             </div>
             {/* {isGenerating && <div className="typing-indicator"></div>} */}
             <MemoizedReactMarkdown
-              className="prose prose-invert text-base w-full text-[#eaeaea]"
+              className="prose prose-invert w-full text-neutral-200"
               remarkPlugins={[remarkGfm, remarkMath]}
               rehypePlugins={[rehypeKatex]}
               components={{
