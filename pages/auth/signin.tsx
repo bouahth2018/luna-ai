@@ -16,7 +16,7 @@ export default function SignIn({
       const session = await getSession();
       console.log(session);
       if (session) {
-        router.push("/chat");
+        router.replace("/chat");
       } else {
         setLoading(false);
       }
