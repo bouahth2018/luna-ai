@@ -39,9 +39,9 @@ export default function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <div className="flex flex-col justify-center min-h-full">
-          <div className="flex justify-center items-center w-full flex-1 self-center p-6 flex-col relative">
+          <div className="flex justify-center items-center text-center w-full flex-1 self-center p-6 flex-col relative">
             <Loader className="h-8 w-8 text-white animate-spin" />
-            <span className="text-[#777] mt-6">
+            <span className="text-[#777] mt-6 text-sm md:text-base">
               Please stand by, while we are checking your browser...
             </span>
           </div>

@@ -31,7 +31,7 @@ export const Navbar: FC<Props> = ({
         </span>
         . Powered by ChatGPT
       </h1> */}
-      <p className="flex-1 text-center text-[#eaeaea]">
+      <p className="flex-1 text-center text-ellipsis overflow-hidden line-clamp-1 px-2 text-[#eaeaea]">
         {!isLoading && conversation ? <>{conversation.name}</> : <>New Chat</>}
       </p>
       <Link
