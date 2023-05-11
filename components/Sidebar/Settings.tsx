@@ -53,11 +53,13 @@ export const Settings: FC<Props> = ({ handleRefresh, conversations }) => {
           handleClearConversations={handleClearConversations}
         />
       ) : null}
-      <SidebarButton
-        text={"Support us"}
-        icon={<HeartIcon className="h-5 w-5" />}
-        onClick={handleOpenModal}
-      />
+      <div className="hidden md:block">
+        <SidebarButton
+          text={"Support us"}
+          icon={<HeartIcon className="h-5 w-5" />}
+          onClick={handleOpenModal}
+        />
+      </div>
       <SidebarButton
         text={"Log out"}
         icon={<ArrowRightOnRectangleIcon className="h-5 w-5" />}

@@ -1,53 +1,57 @@
-import NextAuth, { NextAuthOptions, User } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
-import FacebookProvider from "next-auth/providers/facebook";
+import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
-import { JWT } from "next-auth/jwt";
-import { AdapterUser } from "next-auth/adapters";
 import prisma from "@/lib/prisma";
-
-// const prisma = new PrismaClient();
+import NextAuth from "next-auth/next";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
+  session: {
+    strategy: "jwt",
+  },
+  pages: {
+    signIn: "/auth/signin",
+  },
   providers: [
-    // DiscordProvider({
-    //   clientId: process.env.DISCORD_CLIENT_ID,
-    //   clientSecret: process.env.DISCORD_CLIENT_SECRET,
-    //   authorization: { params: { scope: ["identify email"].join(" ") } },
-    // }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
   callbacks: {
-    async jwt({ token, user }: any) {
-      if (user) {
-        const session = await prisma.session.findFirst({
-          where: { userId: user.id },
-          select: { sessionToken: true },
-        });
-
-        console.log("session: ", session);
-        if (session) {
-          token.sessionToken = session.sessionToken;
-        }
+    async session({ token, session }) {
+      if (token) {
+        session.user.id = token.id;
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.image = token.picture;
       }
-      console.log("token: ", token);
-      return token;
-    },
-    async session({ session, token, user }: any) {
-      session.user.id = user.id;
+
       return session;
+    },
+    async jwt({ token, user }) {
+      const dbUser = await prisma.user.findFirst({
+        where: {
+          email: token.email,
+        },
+      });
+
+      if (!dbUser) {
+        if (user) {
+          token.id = user?.id;
+        }
+        return token;
+      }
+
+      return {
+        id: dbUser.id,
+        name: dbUser.name,
+        email: dbUser.email,
+        picture: dbUser.image,
+      };
     },
   },
   secret: process.env.SECRET,
-  jwt: {
-    maxAge: 60 * 60 * 24 * 30,
-  },
 };
 
 export default NextAuth(authOptions);
