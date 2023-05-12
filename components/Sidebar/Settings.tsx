@@ -53,13 +53,14 @@ export const Settings: FC<Props> = ({ handleRefresh, conversations }) => {
           handleClearConversations={handleClearConversations}
         />
       ) : null}
-      <div className="hidden md:block">
-        <SidebarButton
-          text={"Support us"}
-          icon={<HeartIcon className="h-5 w-5" />}
-          onClick={handleOpenModal}
-        />
-      </div>
+      <button
+        type="button"
+        className="hidden md:flex py-3 px-3 items-center gap-3 rounded-md hover:bg-[#222] transition-colors duration-200 text-white cursor-pointer text-sm"
+        onClick={handleOpenModal}
+      >
+        <HeartIcon className="h-5 w-5" />
+        Support us
+      </button>
       <SidebarButton
         text={"Log out"}
         icon={<ArrowRightOnRectangleIcon className="h-5 w-5" />}
