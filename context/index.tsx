@@ -1,4 +1,6 @@
-import { ChatGPTMessage } from "@/components/Chat/ChatLine";
+"use client";
+
+import { ChatGPTMessage } from "@/types";
 import { createContext, useContext, useRef, useState } from "react";
 
 interface ConversationContextType {
