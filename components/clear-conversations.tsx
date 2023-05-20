@@ -1,5 +1,3 @@
-"use client";
-
 import { CheckIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { FC, useState } from "react";
 import { SidebarButton } from "./sidebar-button";

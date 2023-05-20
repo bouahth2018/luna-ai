@@ -1,5 +1,3 @@
-"use client";
-
 import { useConversation } from "@/context";
 import { ChatGPTMessage } from "@/types";
 import {
