@@ -1,10 +1,13 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Image from "next/image";
 
-export default function Modal({ open, setOpen }: any) {
-  // const [open, setOpen] = useState(true);
+interface Props {
+  open: boolean;
+  setOpen: (value: boolean) => void;
+}
 
+export function SupportModal({ open, setOpen }: Props) {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={setOpen}>
@@ -17,7 +20,7 @@ export default function Modal({ open, setOpen }: any) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-[#111] bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 backdrop-blur-md bg-black bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -31,7 +34,7 @@ export default function Modal({ open, setOpen }: any) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-black px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-neutral-600/50 dark:bg-neutral-500/50 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
                 <div className="text-center">
                   <Dialog.Title
                     as="h3"
@@ -58,7 +61,7 @@ export default function Modal({ open, setOpen }: any) {
                 <div className="mt-4 sm:mt-5">
                   <button
                     type="button"
-                    className="inline-flex w-full justify-center text-sm font-semibold text-white"
+                    className="inline-flex w-full justify-center text-sm font-semibold text-white outline-none"
                     onClick={() => setOpen(false)}
                   >
                     Go back

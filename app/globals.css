@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#__next {
+  height: 100%;
+}
+
+.react-scroll-to-bottom {
+  height: 100%;
+  overflow-y: auto;
+  width: 100%;
+}
+
+:root {
+  --bg-color: black;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: white;
+  }
+}
+
+.typing-indicator {
+  display: absolute;
+  width: 12px;
+  height: 24px;
+  background-color: var(--bg-color);
+  animation: blink 1s infinite;
+}
+
+/* Define the animation for the typing indicator */
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
