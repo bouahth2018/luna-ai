@@ -1,7 +1,8 @@
-import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
+
+import { authOptions } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 import { Conversation } from "@prisma/client";
 
 interface Params {

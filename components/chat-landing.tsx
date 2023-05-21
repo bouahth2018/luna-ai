@@ -1,7 +1,8 @@
 "use client";
 
-import { SupportModal } from "@/components/support-modal";
 import { useState } from "react";
+
+import { SupportModal } from "@/components/support-modal";
 
 export function ChatLanding() {
   const [open, setOpen] = useState<boolean>(false);
@@ -17,8 +18,8 @@ export function ChatLanding() {
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight dark:text-white sm:text-6xl">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
-              Luna AI.
-            </span>{" "}
+              Luna AI.{" "}
+            </span>
             Powered by ChatGPT
           </h1>
           <p className="mt-6 text-md sm:text-base dark:text-[#eaeaea]">

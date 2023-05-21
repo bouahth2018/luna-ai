@@ -1,32 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useParams } from "next/navigation";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
+
 import { Conversations } from "@/components/conversations";
+import { MobileNavbar } from "@/components/mobile-nav";
 import { SidebarError } from "@/components/sidebar-error";
-import { IconLoader } from "@tabler/icons-react";
-import { Fragment, memo, useCallback, useEffect, useState } from "react";
 import { SidebarSettings } from "@/components/sidebar-settings";
 import { useConversation } from "@/context";
-import { MobileNavbar } from "@/components/mobile-nav";
-import { useParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { IconLoader } from "@tabler/icons-react";
 
 interface ChatLayoutProps {
   children: React.ReactNode;
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: RequestInfo | URL) =>
+  fetch(url).then((res) => res.json());
 
 export default function ChatLayout({ children }: ChatLayoutProps) {
-  const {
-    setMessages,
-    currentConversationId,
-    setCurrentConversationId,
-    revalidate,
-    setRevalidate,
-  } = useConversation();
+  const { setMessages, setCurrentConversationId, revalidate, setRevalidate } =
+    useConversation();
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
   const {
@@ -35,6 +32,8 @@ export default function ChatLayout({ children }: ChatLayoutProps) {
     isLoading,
     mutate,
   } = useSWR("/api/conversations", fetcher);
+
+  console.log(conversations);
 
   const handleRefresh = useCallback(() => {
     mutate();

@@ -1,7 +1,8 @@
 "use client";
 
-import { ContextProvider } from "@/context";
 import { SessionProvider } from "next-auth/react";
+
+import { ContextProvider } from "@/context";
 
 interface Props {
   children?: React.ReactNode;

@@ -1,6 +1,7 @@
-import { CheckIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { FC, useState } from "react";
 import { SidebarButton } from "./sidebar-button";
+import { FC, useState } from "react";
+
+import { CheckIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 interface Props {
   handleClearConversations: () => Promise<void>;

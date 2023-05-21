@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { useState } from "react";
+
 import { IconLoader } from "@tabler/icons-react";
 
 export function UserAuthForm() {

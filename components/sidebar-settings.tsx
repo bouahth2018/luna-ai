@@ -1,21 +1,20 @@
-// "use client";
+import { ClearConversations } from "./clear-conversations";
+import { SupportModal } from "./support-modal";
+import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { useState } from "react";
+
+import { useConversation } from "@/context";
+import {
+  ArrowRightOnRectangleIcon,
+  HeartIcon,
+} from "@heroicons/react/24/outline";
+import { Conversation } from "@prisma/client";
 
 interface Props {
   handleRefresh: () => void;
   conversations: Conversation[];
 }
-
-import {
-  ArrowRightOnRectangleIcon,
-  HeartIcon,
-} from "@heroicons/react/24/outline";
-import { useState } from "react";
-import { SupportModal } from "./support-modal";
-import { signOut } from "next-auth/react";
-import { Conversation } from "@prisma/client";
-import { useConversation } from "@/context";
-import { useRouter } from "next/navigation";
-import { ClearConversations } from "./clear-conversations";
 
 export function SidebarSettings({ handleRefresh, conversations }: Props) {
   const { breakChatRef, setCurrentConversationId, setMessages } =

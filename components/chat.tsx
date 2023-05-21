@@ -1,22 +1,24 @@
 "use client";
 
-import { useConversation } from "@/context";
-import { ChatGPTMessage } from "@/types";
-import { IconArrowDown, IconLoader } from "@tabler/icons-react";
+import { ChatInput } from "./chat-input";
+import { ChatLanding } from "./chat-landing";
+import { ChatLine, LoadingChatLine } from "./chat-line";
+import dynamic from "next/dynamic";
 import Error from "next/error";
 import { useParams, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import { ChatLanding } from "./chat-landing";
-import dynamic from "next/dynamic";
-import { ChatLine, LoadingChatLine } from "./chat-line";
-import { ChatInput } from "./chat-input";
+
+import { useConversation } from "@/context";
+import { IconArrowDown, IconLoader } from "@tabler/icons-react";
+import { ChatGPTMessage } from "@/types";
 
 const ScrollToBottom = dynamic(() => import("react-scroll-to-bottom"), {
   ssr: false,
 });
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: RequestInfo | URL) =>
+  fetch(url).then((res) => res.json());
 
 export function Chat() {
   const { messages, setMessages } = useConversation();

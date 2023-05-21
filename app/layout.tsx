@@ -1,7 +1,8 @@
-import { cn } from "@/lib/utils";
 import "./globals.css";
-import { Inter } from "next/font/google";
 import Providers from "./providers";
+import { Inter } from "next/font/google";
+
+import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/react";
 
 // const inter = Inter({ subsets: ["latin"] });
