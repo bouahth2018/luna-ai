@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { Conversations } from "@/components/conversations";
 import { SidebarError } from "@/components/sidebar-error";
 import { IconLoader } from "@tabler/icons-react";
-import { Fragment, memo, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { SidebarSettings } from "@/components/sidebar-settings";
 import { useConversation } from "@/context";
 import { MobileNavbar } from "@/components/mobile-nav";
@@ -17,16 +17,12 @@ interface ChatLayoutProps {
   children: React.ReactNode;
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: RequestInfo | URL) =>
+  fetch(url).then((res) => res.json());
 
 export default function ChatLayout({ children }: ChatLayoutProps) {
-  const {
-    setMessages,
-    currentConversationId,
-    setCurrentConversationId,
-    revalidate,
-    setRevalidate,
-  } = useConversation();
+  const { setMessages, setCurrentConversationId, revalidate, setRevalidate } =
+    useConversation();
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
   const {
@@ -35,6 +31,8 @@ export default function ChatLayout({ children }: ChatLayoutProps) {
     isLoading,
     mutate,
   } = useSWR("/api/conversations", fetcher);
+
+  console.log(conversations);
 
   const handleRefresh = useCallback(() => {
     mutate();

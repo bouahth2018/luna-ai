@@ -16,7 +16,8 @@ const ScrollToBottom = dynamic(() => import("react-scroll-to-bottom"), {
   ssr: false,
 });
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: RequestInfo | URL) =>
+  fetch(url).then((res) => res.json());
 
 export function Chat() {
   const { messages, setMessages } = useConversation();

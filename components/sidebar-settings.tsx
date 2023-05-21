@@ -1,10 +1,3 @@
-// "use client";
-
-interface Props {
-  handleRefresh: () => void;
-  conversations: Conversation[];
-}
-
 import {
   ArrowRightOnRectangleIcon,
   HeartIcon,
@@ -16,6 +9,11 @@ import { Conversation } from "@prisma/client";
 import { useConversation } from "@/context";
 import { useRouter } from "next/navigation";
 import { ClearConversations } from "./clear-conversations";
+
+interface Props {
+  handleRefresh: () => void;
+  conversations: Conversation[];
+}
 
 export function SidebarSettings({ handleRefresh, conversations }: Props) {
   const { breakChatRef, setCurrentConversationId, setMessages } =
