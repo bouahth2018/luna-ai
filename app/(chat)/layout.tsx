@@ -1,17 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import useSWR from "swr";
-import { Conversations } from "@/components/conversations";
-import { SidebarError } from "@/components/sidebar-error";
-import { IconLoader } from "@tabler/icons-react";
+import { useParams } from "next/navigation";
 import { Fragment, useCallback, useEffect, useState } from "react";
+import useSWR from "swr";
+
+import { Conversations } from "@/components/conversations";
+import { MobileNavbar } from "@/components/mobile-nav";
+import { SidebarError } from "@/components/sidebar-error";
 import { SidebarSettings } from "@/components/sidebar-settings";
 import { useConversation } from "@/context";
-import { MobileNavbar } from "@/components/mobile-nav";
-import { useParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { IconLoader } from "@tabler/icons-react";
 
 interface ChatLayoutProps {
   children: React.ReactNode;

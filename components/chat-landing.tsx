@@ -1,7 +1,8 @@
 "use client";
 
-import { SupportModal } from "@/components/support-modal";
 import { useState } from "react";
+
+import { SupportModal } from "@/components/support-modal";
 
 export function ChatLanding() {
   const [open, setOpen] = useState<boolean>(false);

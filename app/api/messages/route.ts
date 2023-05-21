@@ -1,8 +1,9 @@
-import { Conversation, Message } from "@prisma/client";
-import prisma from "@/lib/prisma";
-import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
+
 import { authOptions } from "@/lib/auth";
+import prisma from "@/lib/prisma";
+import { Conversation, Message } from "@prisma/client";
 
 interface NewMessage {
   role: string;

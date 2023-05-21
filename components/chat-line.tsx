@@ -1,10 +1,11 @@
-import clsx from "clsx";
-import { MemoizedReactMarkdown } from "./memoized-react-markdown";
-import { ChatGPTMessage } from "@/types";
 import { CodeBlock } from "./code-block";
+import { MemoizedReactMarkdown } from "./memoized-react-markdown";
+import clsx from "clsx";
+import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
+
+import { ChatGPTMessage } from "@/types";
 
 // loading placeholder animation for the chat line
 export const LoadingChatLine = () => (

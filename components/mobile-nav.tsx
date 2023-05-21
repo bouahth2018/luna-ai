@@ -1,6 +1,7 @@
+import Link from "next/link";
+
 import { useConversation } from "@/context";
 import { Bars3Icon, PlusIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
 
 interface Props {
   setSidebarOpen: (value: boolean) => void;

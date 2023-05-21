@@ -1,3 +1,8 @@
+import clsx from "clsx";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
 import { useConversation } from "@/context";
 import {
   ChatBubbleLeftIcon,
@@ -7,10 +12,6 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Conversation } from "@prisma/client";
-import clsx from "clsx";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 interface Props {
   conversations: Conversation[];

@@ -1,15 +1,16 @@
 import { useConversation } from "@/context";
-import { ChatGPTMessage } from "@/types";
+import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useEffect, useRef, useState } from "react";
+import { useCookies } from "react-cookie";
+
 import {
   IconLoader2,
   IconPlayerStop,
   IconRefresh,
   IconSend,
 } from "@tabler/icons-react";
-import { useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { useCookies } from "react-cookie";
+import { ChatGPTMessage } from "@/types";
 
 interface Props {
   loading: boolean;

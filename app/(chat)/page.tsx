@@ -1,5 +1,6 @@
-import { Chat } from "@/components/chat";
 import { Metadata } from "next";
+
+import { Chat } from "@/components/chat";
 
 export const metadata: Metadata = {
   title: "New Chat",
