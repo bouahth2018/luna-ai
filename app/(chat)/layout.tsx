@@ -33,8 +33,6 @@ export default function ChatLayout({ children }: ChatLayoutProps) {
     mutate,
   } = useSWR("/api/conversations", fetcher);
 
-  console.log(conversations);
-
   const handleRefresh = useCallback(() => {
     mutate();
   }, [mutate]);
