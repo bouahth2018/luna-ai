@@ -77,9 +77,11 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
                 },
                 table({ children }) {
                   return (
-                    <table className="border-collapse border border-[#555] py-1 px-3">
-                      {children}
-                    </table>
+                    <div className="overflow-auto">
+                      <table className="border-collapse border border-[#555] py-1 px-3">
+                        {children}
+                      </table>
+                    </div>
                   );
                 },
                 th({ children }) {
