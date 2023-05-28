@@ -8,8 +8,6 @@ An AI chat application that utilizes OpenAI's GPT-3.5 model built using the new 
 
 This project is created with the aim of providing Lao users with access to ChatGPT features. It is also an experiment to see how modern app features like (authentication, API routes, ...etc) would work in Next.js 13 and server components. 
 
-First, run the development server:
-
 ## Features
 
 - New ```/app``` directory
