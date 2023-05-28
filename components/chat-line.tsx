@@ -1,6 +1,7 @@
 import { CodeBlock } from "./code-block";
 import { MemoizedReactMarkdown } from "./memoized-react-markdown";
 import clsx from "clsx";
+import React from "react";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -26,12 +27,11 @@ export const LoadingChatLine = () => (
 );
 
 export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
-  const convertNewLines = (text: string) => text.split("\n").join("  \n");
-  const formattedMessage = convertNewLines(content);
-
   if (!content) {
     return null;
   }
+
+  const paragraphs = content.split("\n");
 
   return (
     <div
@@ -47,16 +47,14 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
           </p>
         </div>
         <div className="relative flex w-full flex-col">
-          <div
-            className={clsx("text ", role == "assistant" ? "" : "text-white")}
-          >
+          <div className={role == "assistant" ? "" : "text-white"}>
             <div className="lg:hidden pb-2">
               <p className="font-large text-neutral-500">
                 {role == "assistant" ? "Luna" : "You"}
               </p>
             </div>
             <MemoizedReactMarkdown
-              className="prose prose-neutral dark:prose-invert w-full text-gray-800 dark:text-neutral-200"
+              className="prose prose-neutral dark:prose-invert text-gray-800 dark:text-neutral-200 items-center"
               remarkPlugins={[remarkGfm, remarkMath]}
               rehypePlugins={[rehypeKatex]}
               components={{
@@ -100,7 +98,7 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
                 },
               }}
             >
-              {formattedMessage}
+              {content}
             </MemoizedReactMarkdown>
           </div>
         </div>
