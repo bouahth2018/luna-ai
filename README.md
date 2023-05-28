@@ -1,22 +1,47 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Luna AI
 
-## Getting Started
+An AI chat application that utilizes OpenAI's GPT-3.5 model built using the new app router, and server components in Next.js 13.
+
+> **Warning** This app is work in progress and not meant to be a starter template. 
+
+## About this project
+
+This project is created with the aim of providing Lao users with access to ChatGPT features. It is also an experiment to see how modern app features like (authentication, API routes, ...etc) would work in Next.js 13 and server components. 
 
 First, run the development server:
 
+## Features
+
+- New ```/app``` directory
+- Routing and layouts
+- Server and client components
+- API routes and middleware
+- ORM using Prisma
+- Database using Planetscale
+- Styled using Tailwind CSS
+- Written in Typescript
+
+## Getting Started
+
+1. Install dependencies using npm:
+
+```bash
+npm install
+```
+
+2. Copy ```.env.example``` to ```.env.local``` and update the variables.
+
+```bash
+cp .env.example .env.local
+```
+
+3. Start the development server: 
+
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
 ## Learn More
 
