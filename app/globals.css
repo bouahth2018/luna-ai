@@ -23,7 +23,6 @@
 }
 
 .typing-indicator {
-  display: absolute;
   width: 12px;
   height: 24px;
   background-color: var(--bg-color);
