@@ -63,9 +63,9 @@ export function Chat() {
               {messages.map(({ content, role }: any, index: any) => (
                 <ChatLine key={index} role={role} content={content} />
               ))}
-              <div className="bg-[#222] w-full">
-                {loading && <LoadingChatLine />}
-              </div>
+              {/* <div className="bg-[#222]/50 w-full"> */}
+              {loading && <LoadingChatLine />}
+              {/* </div> */}
               <div className="w-full h-24 md:h-40 flex-shrink-0"></div>
             </div>
             {showButton && (
