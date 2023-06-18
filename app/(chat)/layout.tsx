@@ -148,7 +148,7 @@ export default function ChatLayout({ children }: ChatLayoutProps) {
       </Transition.Root>
 
       {/* Static sidebar for desktop */}
-      <div className="hidden bg-[#111] md:flex md:w-[260px] md:flex-col border-r border-[#333]">
+      <div className="hidden bg-[#111] md:flex md:w-72 md:flex-col border-r border-[#333]">
         {/* Sidebar component */}
         <div className="flex h-full min-h-0 flex-col">
           <div className="flex h-full w-full flex-1 items-start border-black/20">

@@ -36,7 +36,9 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
   return (
     <div
       className={`group w-full px-4 pb-3 pt-1 border-b border-black/10 ${
-        role != "assistant" ? "dark:bg-[#111]" : "bg-neutral-100 dark:bg-[#222]"
+        role != "assistant"
+          ? "dark:bg-neutral-800/25"
+          : "bg-neutral-100 dark:bg-neutral-800/75"
       }`}
       style={{ overflowWrap: "anywhere" }}
     >
