@@ -53,7 +53,7 @@ export function Chat() {
       <div className="flex-1 overflow-hidden">
         {isLoading && (
           <div className="flex mt-8 items-center justify-center">
-            <IconLoader className="h-5 w-5 animate-spin" />
+            <IconLoader className="h-5 w-5 animate-spin dark:text-[#999]" />
           </div>
         )}
         {!isLoading && messages.length === 0 && <ChatLanding />}
