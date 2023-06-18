@@ -10,7 +10,7 @@ import { ChatGPTMessage } from "@/types";
 
 // loading placeholder animation for the chat line
 export const LoadingChatLine = () => (
-  <div className="px-4 pb-3 pt-1 w-full bg-neutral-100 dark:bg-[#222]">
+  <div className="px-4 pb-3 pt-1 w-full bg-neutral-100 dark:bg-[#222]/50">
     <div className="gap-4 md:gap-6 md:max-w-2xl lg:max-w-3xl p-4 md:py-6 flex lg:px-0 m-auto">
       <div className="text-right hidden lg:block">
         <p className="text-neutral-500 w-10">Luna</p>
@@ -37,8 +37,8 @@ export function ChatLine({ role = "assistant", content }: ChatGPTMessage) {
     <div
       className={`group w-full px-4 pb-3 pt-1 border-b border-black/10 ${
         role != "assistant"
-          ? "dark:bg-neutral-800/25"
-          : "bg-neutral-100 dark:bg-neutral-800/75"
+          ? "dark:bg-[#111]"
+          : "bg-neutral-100 dark:bg-[#222]/50"
       }`}
       style={{ overflowWrap: "anywhere" }}
     >
